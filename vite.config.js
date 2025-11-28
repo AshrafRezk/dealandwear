@@ -13,7 +13,7 @@ export default defineConfig({
         name: 'Deal and Wear',
         short_name: 'Deal & Wear',
         description: 'AI-powered styling assistant to help you find the perfect outfit',
-        theme_color: '#6366f1',
+        theme_color: '#1d1d1f',
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
