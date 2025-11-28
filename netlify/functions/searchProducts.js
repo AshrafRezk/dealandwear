@@ -70,15 +70,15 @@ const stores = [
  * Scrape products from a store with retry logic
  * @param {Object} store - Store configuration
  * @param {string} query - Search query
- * @param {number} retries - Number of retry attempts (default: 2)
+ * @param {number} retries - Number of retry attempts (default: 1)
  */
-async function scrapeStore(store, query, retries = 2) {
+async function scrapeStore(store, query, retries = 1) {
   const searchUrl = store.searchUrl.replace('{query}', encodeURIComponent(query));
   
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const response = await axios.get(searchUrl, {
-        timeout: 5000, // Reduced timeout to prevent hanging
+        timeout: 3000, // 3 seconds - optimized for Netlify free tier
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -103,7 +103,8 @@ async function scrapeStore(store, query, retries = 2) {
 
     // Generic product extraction - try common selectors
     // This is a simplified version - each store would need specific selectors
-    $('[class*="product"], [class*="item"], [data-qa*="product"]').slice(0, 10).each((i, elem) => {
+    // Limit to 5 products per store to speed up processing
+    $('[class*="product"], [class*="item"], [data-qa*="product"]').slice(0, 5).each((i, elem) => {
       try {
         const $elem = $(elem);
         
@@ -151,15 +152,15 @@ async function scrapeStore(store, query, retries = 2) {
         console.error(`Error scraping ${store.name}:`, error.message, `(attempt ${attempt + 1}/${retries + 1})`);
       }
       
-      // Retry on network errors or timeouts
+      // Retry on network errors or timeouts (only if we have time)
       if (attempt < retries && (
         error.code === 'ECONNABORTED' || 
         error.message.includes('timeout') ||
         error.code === 'ECONNREFUSED' ||
         error.code === 'ETIMEDOUT'
       )) {
-        // Exponential backoff
-        await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt)));
+        // Short backoff to save time
+        await new Promise(resolve => setTimeout(resolve, 500 * (attempt + 1)));
         continue;
       }
       
@@ -178,14 +179,16 @@ async function scrapeStore(store, query, retries = 2) {
  */
 async function searchProducts(query, maxResults = 20) {
   const enabledStores = stores.filter(s => s.enabled);
+  // Limit to 4 stores max to stay within timeout
+  const storesToSearch = enabledStores.slice(0, 4);
   const allProducts = [];
   
   // Search stores in parallel with timeout
-  const searchPromises = enabledStores.map(store => 
+  const searchPromises = storesToSearch.map(store => 
     Promise.race([
       scrapeStore(store, query),
       new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Timeout')), 5000)
+        setTimeout(() => reject(new Error('Timeout')), 3000)
       )
     ]).catch((error) => {
       // Log but don't throw - return empty array
@@ -196,7 +199,7 @@ async function searchProducts(query, maxResults = 20) {
 
   const results = await Promise.allSettled(searchPromises);
   
-  results.forEach((result, index) => {
+  results.forEach((result) => {
     if (result.status === 'fulfilled' && Array.isArray(result.value)) {
       allProducts.push(...result.value);
     }
@@ -220,36 +223,41 @@ async function searchProducts(query, maxResults = 20) {
 /**
  * Handler function
  */
-export async function handler(event, context) {
-  // Set function timeout to prevent hanging (Netlify functions have a max timeout)
-  const functionTimeout = 25000; // 25 seconds (Netlify free tier limit is 10s, pro is 26s)
+export async function handler(event) {
+  // Set function timeout to prevent hanging (Netlify free tier limit is 10s)
+  const functionTimeout = 9000; // 9 seconds - under Netlify free tier 10s limit
   
-  // Handle CORS preflight
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers,
-      body: ''
-    };
-  }
-
-  // Only allow GET and POST
-  if (!['GET', 'POST'].includes(event.httpMethod)) {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
-  }
-
-  // Create a timeout promise
-  const timeoutPromise = new Promise((_, reject) => {
-    setTimeout(() => {
-      reject(new Error('Function timeout - search took too long'));
-    }, functionTimeout);
-  });
-
+  // Wrap entire handler in try-catch to prevent crashes
   try {
+    // Handle CORS preflight
+    if (event.httpMethod === 'OPTIONS') {
+      return {
+        statusCode: 200,
+        headers,
+        body: ''
+      };
+    }
+
+    // Only allow GET and POST
+    if (!['GET', 'POST'].includes(event.httpMethod)) {
+      return {
+        statusCode: 405,
+        headers,
+        body: JSON.stringify({ 
+          success: false,
+          error: 'Method not allowed',
+          products: []
+        })
+      };
+    }
+
+    // Create a timeout promise
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(new Error('Function timeout - search took too long'));
+      }, functionTimeout);
+    });
+
     // Parse query parameter
     let query = '';
     try {
@@ -301,11 +309,18 @@ export async function handler(event, context) {
     }
     
     // Basic sanitization - remove potentially dangerous characters
-    const safeQuery = sanitizedQuery.replace(/[<>\"']/g, '');
+    const safeQuery = sanitizedQuery.replace(/[<>"']/g, '');
 
+    // Log search start for debugging
+    console.log(`Search started for query: "${safeQuery}"`);
+    const startTime = Date.now();
+    
     // Search products with timeout protection
-    const searchPromise = searchProducts(safeQuery, 20);
+    const searchPromise = searchProducts(safeQuery, 15); // Reduced max results for speed
     const products = await Promise.race([searchPromise, timeoutPromise]);
+    
+    const duration = Date.now() - startTime;
+    console.log(`Search completed in ${duration}ms, found ${products.length} products`);
 
     return {
       statusCode: 200,

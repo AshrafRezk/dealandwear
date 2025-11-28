@@ -5,6 +5,12 @@
 # Allow VITE_GEMINI_API_KEY in build output (client-side API key)
 [build.environment]
   SECRETS_SCAN_OMIT_KEYS = "VITE_GEMINI_API_KEY"
+  NODE_VERSION = "18"
+
+# Function configuration
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["netlify/functions/**"]
 
 [[redirects]]
   from = "/*"
