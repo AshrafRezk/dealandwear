@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import styles from './DesktopNav.module.css';
 import { hapticNavigate } from '../../utils/haptics';
+import SearchIcon from '@mui/icons-material/Search';
 
 function DesktopNav() {
   return (
@@ -11,6 +12,14 @@ function DesktopNav() {
         onClick={() => hapticNavigate()}
       >
         Style Assistant
+      </NavLink>
+      <NavLink 
+        to="/search" 
+        className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
+        onClick={() => hapticNavigate()}
+      >
+        <SearchIcon style={{ fontSize: 18, marginRight: 4 }} />
+        Search
       </NavLink>
       <NavLink 
         to="/about" 

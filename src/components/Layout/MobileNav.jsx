@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import styles from './MobileNav.module.css';
 import { hapticNavigate } from '../../utils/haptics';
 import StyleIcon from '@mui/icons-material/Style';
+import SearchIcon from '@mui/icons-material/Search';
 import InfoIcon from '@mui/icons-material/Info';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 
@@ -15,6 +16,14 @@ function MobileNav() {
       >
         <StyleIcon className={styles.icon} />
         <span className={styles.label}>Style</span>
+      </NavLink>
+      <NavLink 
+        to="/search" 
+        className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
+        onClick={() => hapticNavigate()}
+      >
+        <SearchIcon className={styles.icon} />
+        <span className={styles.label}>Search</span>
       </NavLink>
       <NavLink 
         to="/about" 

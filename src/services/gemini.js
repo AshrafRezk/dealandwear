@@ -69,14 +69,28 @@ const buildSystemContext = (userPreferences = {}) => {
   context += JSON.stringify(personaConfig.examples.simple, null, 2);
   
   // Add user preferences if available
+  const prefs = [];
   if (userPreferences.style) {
-    context += `\n\nThe user prefers ${userPreferences.style} style.`;
+    prefs.push(`${userPreferences.style} style`);
   }
   if (userPreferences.occasion) {
-    context += ` They're looking for ${userPreferences.occasion} outfits.`;
+    prefs.push(`${userPreferences.occasion} occasions`);
   }
   if (userPreferences.budget) {
-    context += ` Their budget is ${userPreferences.budget}.`;
+    prefs.push(`${userPreferences.budget === '$' ? 'budget-friendly' : userPreferences.budget === '$$' ? 'moderate' : userPreferences.budget === '$$$' ? 'premium' : 'luxury'} budget`);
+  }
+  if (userPreferences.favoriteBrands && userPreferences.favoriteBrands.length > 0) {
+    prefs.push(`favorite brands: ${userPreferences.favoriteBrands.join(', ')}`);
+  }
+  if (userPreferences.size) {
+    prefs.push(`size: ${userPreferences.size}`);
+  }
+  if (userPreferences.colors && userPreferences.colors.length > 0) {
+    prefs.push(`preferred colors: ${userPreferences.colors.join(', ')}`);
+  }
+  
+  if (prefs.length > 0) {
+    context += `\n\nUser's saved preferences: ${prefs.join(', ')}. Use these preferences to provide personalized recommendations.`;
   }
   
   // Add product search capabilities
@@ -214,6 +228,171 @@ const getFallbackResponse = (userMessage, userPreferences) => {
   }
   
   return "I'm here to help you find your perfect style. Could you tell me more about what you're looking for?";
+};
+
+/**
+ * Orchestrate user message - comprehensive analysis for action planning
+ * @param {string} userMessage - The user's message
+ * @param {Object} currentPreferences - Current user preferences
+ * @param {Array} conversationHistory - Previous messages for context
+ * @returns {Promise<Object>} - Detailed orchestration result
+ */
+export const orchestrateUserMessage = async (userMessage, currentPreferences = {}, conversationHistory = []) => {
+  try {
+    if (!GEMINI_API_KEY) {
+      return orchestrateFallback(userMessage, currentPreferences);
+    }
+
+    const prompt = `Analyze this user message in the context of a fashion styling assistant. Determine the user's intent and extract all relevant information. Respond ONLY with valid JSON in this exact format:
+{
+  "intent": "product_search" | "style_preference" | "preference_update" | "style_advice" | "question" | "conversation",
+  "confidence": 0.0-1.0,
+  "action": "SEARCH_PRODUCT" | "STYLE_ADVICE" | "MEMORIZE_PREFERENCE" | "GENERAL_CONVERSATION" | "ASK_QUESTION",
+  "extractedData": {
+    "searchQuery": "string or null (product to search for)",
+    "style": "string or null (e.g., 'smart casual', 'formal', 'streetwear')",
+    "occasion": "string or null (e.g., 'work', 'date', 'party')",
+    "budget": "string or null (e.g., '$', '$$', '$$$', '$$$$')",
+    "priceRange": {"min": number or null, "max": number or null},
+    "currency": "string or null",
+    "colors": ["array of color names"],
+    "size": "string or null",
+    "brands": ["array of brand names"],
+    "needsClarification": boolean
+  },
+  "reasoning": "brief explanation of why this action was chosen"
+}
+
+User message: "${userMessage}"
+Current preferences: ${JSON.stringify(currentPreferences)}
+Recent conversation: ${conversationHistory.slice(-3).map(m => `${m.isUser ? 'User' : 'AI'}: ${m.text}`).join('\n')}
+
+Examples:
+- "find me blue jeans" → {"intent": "product_search", "action": "SEARCH_PRODUCT", "extractedData": {"searchQuery": "blue jeans"}}
+- "I prefer casual style" → {"intent": "preference_update", "action": "MEMORIZE_PREFERENCE", "extractedData": {"style": "casual"}}
+- "What should I wear for a date?" → {"intent": "style_advice", "action": "STYLE_ADVICE", "extractedData": {"occasion": "date"}}
+- "Show me dresses under 500 EGP" → {"intent": "product_search", "action": "SEARCH_PRODUCT", "extractedData": {"searchQuery": "dresses", "priceRange": {"max": 500}, "currency": "EGP"}}`;
+
+    const response = await fetch(GEMINI_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-goog-api-key': GEMINI_API_KEY
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{ text: prompt }],
+          role: 'user'
+        }]
+      })
+    });
+
+    if (!response.ok) {
+      console.warn('Orchestration API error, using fallback');
+      return orchestrateFallback(userMessage, currentPreferences);
+    }
+
+    const data = await response.json();
+    
+    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+      const responseText = data.candidates[0].content.parts[0].text;
+      
+      // Try to extract JSON from response
+      let jsonText = responseText.trim();
+      if (jsonText.startsWith('```')) {
+        jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      }
+      
+      try {
+        const orchestrationData = JSON.parse(jsonText);
+        return {
+          intent: orchestrationData.intent || 'conversation',
+          action: orchestrationData.action || 'GENERAL_CONVERSATION',
+          confidence: orchestrationData.confidence || 0.7,
+          extractedData: orchestrationData.extractedData || {},
+          reasoning: orchestrationData.reasoning,
+          needsClarification: orchestrationData.extractedData?.needsClarification || false
+        };
+      } catch (parseError) {
+        console.warn('Failed to parse orchestration response, using fallback');
+        return orchestrateFallback(userMessage, currentPreferences);
+      }
+    } else {
+      return orchestrateFallback(userMessage, currentPreferences);
+    }
+  } catch (error) {
+    console.error('Orchestration error:', error);
+    return orchestrateFallback(userMessage, currentPreferences);
+  }
+};
+
+/**
+ * Fallback orchestration function
+ */
+const orchestrateFallback = (userMessage, currentPreferences) => {
+  const lowerMessage = userMessage.toLowerCase();
+  
+  // Check for product search
+  const searchKeywords = ['find', 'search', 'show', 'looking for', 'need', 'want', 'buy'];
+  const productKeywords = ['shirt', 'jeans', 'dress', 'jacket', 'shoes', 'pants', 'top'];
+  
+  if (searchKeywords.some(kw => lowerMessage.includes(kw)) && 
+      productKeywords.some(kw => lowerMessage.includes(kw))) {
+    return {
+      intent: 'product_search',
+      action: 'SEARCH_PRODUCT',
+      confidence: 0.7,
+      extractedData: {
+        searchQuery: userMessage.replace(/^(find|search|show|looking for|need|want|buy)\s+/i, '').trim()
+      },
+      needsClarification: false
+    };
+  }
+  
+  // Check for preference statements
+  if (lowerMessage.includes('prefer') || lowerMessage.includes('like') || lowerMessage.includes('usually')) {
+    return {
+      intent: 'preference_update',
+      action: 'MEMORIZE_PREFERENCE',
+      confidence: 0.6,
+      extractedData: {
+        style: extractStyle(lowerMessage),
+        occasion: extractOccasion(lowerMessage),
+        budget: extractBudget(lowerMessage)
+      },
+      needsClarification: false
+    };
+  }
+  
+  // Default
+  return {
+    intent: 'conversation',
+    action: 'GENERAL_CONVERSATION',
+    confidence: 0.5,
+    extractedData: {},
+    needsClarification: false
+  };
+};
+
+const extractStyle = (message) => {
+  if (message.includes('smart casual')) return 'smart casual';
+  if (message.includes('casual')) return 'casual';
+  if (message.includes('formal')) return 'formal';
+  if (message.includes('streetwear')) return 'streetwear';
+  return null;
+};
+
+const extractOccasion = (message) => {
+  if (message.includes('work') || message.includes('office')) return 'work';
+  if (message.includes('date')) return 'date';
+  if (message.includes('party')) return 'party';
+  return null;
+};
+
+const extractBudget = (message) => {
+  if (message.includes('budget') || message.includes('affordable')) return '$';
+  if (message.includes('luxury') || message.includes('designer')) return '$$$$';
+  return null;
 };
 
 /**

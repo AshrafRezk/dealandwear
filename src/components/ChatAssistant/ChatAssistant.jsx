@@ -3,9 +3,11 @@ import MessageBubble from './MessageBubble';
 import styles from './ChatAssistant.module.css';
 import { brands } from '../../data/brands';
 import { hapticMessage, hapticSelect } from '../../utils/haptics';
-import { generateAIResponse, generateBrandRecommendations, detectUserIntent } from '../../services/gemini';
+import { generateAIResponse, generateBrandRecommendations } from '../../services/gemini';
 import { parseMarkupResponse } from '../../utils/markupParser';
-import { searchProducts, isSearchQuery, extractSearchQuery } from '../../services/productSearch';
+import { searchProducts, extractSearchQuery } from '../../services/productSearch';
+import { orchestrateUserMessage, ACTION_TYPES } from '../../services/orchestrator';
+import { getPreferences, savePreferences, getPreferencesSummary } from '../../services/preferenceMemory';
 
 const AI_NAME = 'Aria';
 
@@ -24,9 +26,17 @@ function ChatAssistant() {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [conversationStage, setConversationStage] = useState(CONVERSATION_STAGES.WELCOME);
-  const [userPreferences, setUserPreferences] = useState({});
+  const [userPreferences, setUserPreferences] = useState(() => getPreferences());
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
+
+  // Load preferences from memory on mount
+  useEffect(() => {
+    const savedPrefs = getPreferences();
+    if (Object.keys(savedPrefs).length > 0) {
+      setUserPreferences(savedPrefs);
+    }
+  }, []);
 
   useEffect(() => {
     // Initial welcome message - more inviting and less prescriptive
@@ -340,15 +350,27 @@ function ChatAssistant() {
     setIsTyping(true);
 
     try {
-      // Detect user intent first
-      const intentData = await detectUserIntent(userInput, userPreferences);
-      const { intent, extractedData } = intentData;
+      // Use orchestration layer to determine action
+      const conversationHistory = messages.map(msg => ({
+        text: msg.text,
+        isUser: msg.isUser
+      }));
 
-      // Handle different intents
-      if (intent === 'product_search') {
+      const orchestration = await orchestrateUserMessage(userInput, userPreferences, conversationHistory);
+      const { action, parameters, needsClarification } = orchestration;
+
+      // Handle different actions based on orchestration
+      if (action === ACTION_TYPES.SEARCH_PRODUCT) {
         setIsTyping(false);
-        const searchQuery = extractedData.searchQuery || extractSearchQuery(userInput);
-        if (searchQuery) {
+        if (needsClarification && parameters.clarificationNeeded) {
+          addMessage({
+            text: parameters.clarificationNeeded
+          }, false);
+          return;
+        }
+        
+        const searchQuery = parameters.query || extractSearchQuery(userInput);
+        if (searchQuery && searchQuery.length >= 2) {
           await searchProductsHandler(searchQuery);
         } else {
           addMessage({
@@ -358,26 +380,90 @@ function ChatAssistant() {
         return;
       }
 
-      // Handle preference updates (style, occasion, budget)
-      if (intent === 'preference_update' || intent === 'style_preference') {
+      // Handle preference memorization
+      if (action === ACTION_TYPES.MEMORIZE_PREFERENCE) {
         const updatedPreferences = { ...userPreferences };
         let hasUpdates = false;
+        let savedPrefs = {};
 
-        if (extractedData.style) {
-          updatedPreferences.style = extractedData.style;
+        if (parameters.style) {
+          updatedPreferences.style = parameters.style;
+          savedPrefs.style = parameters.style;
           hasUpdates = true;
         }
-        if (extractedData.occasion) {
-          updatedPreferences.occasion = extractedData.occasion;
+        if (parameters.occasion) {
+          updatedPreferences.occasion = parameters.occasion;
+          savedPrefs.occasion = parameters.occasion;
           hasUpdates = true;
         }
-        if (extractedData.budget) {
-          updatedPreferences.budget = extractedData.budget;
+        if (parameters.budget) {
+          updatedPreferences.budget = parameters.budget;
+          savedPrefs.budget = parameters.budget;
           hasUpdates = true;
         }
 
         if (hasUpdates) {
-          setUserPreferences(updatedPreferences);
+          // Save to memory
+          const finalPrefs = savePreferences(savedPrefs);
+          setUserPreferences(finalPrefs);
+          
+          setIsTyping(false);
+          
+          // Confirm with user
+          let confirmText = "Got it! I've saved your preference";
+          if (parameters.style) confirmText += ` for ${parameters.style} style`;
+          if (parameters.occasion) confirmText += ` for ${parameters.occasion}`;
+          if (parameters.budget) confirmText += ` with ${parameters.budget === '$' ? 'budget-friendly' : parameters.budget === '$$' ? 'moderate' : parameters.budget === '$$$' ? 'premium' : 'luxury'} budget`;
+          confirmText += ". I'll remember this for future recommendations!";
+          
+          addAIMessage({
+            text: confirmText
+          });
+          return;
+        }
+      }
+
+      // Handle style advice requests
+      if (action === ACTION_TYPES.STYLE_ADVICE) {
+        // Use AI to provide advice with saved preferences context
+        const preferencesSummary = getPreferencesSummary();
+        const advicePrompt = parameters.question || parameters.context || userInput;
+        
+        const conversationHistoryWithPrefs = [
+          ...conversationHistory,
+          {
+            text: `User preferences: ${preferencesSummary}. ${advicePrompt}`,
+            isUser: true
+          }
+        ];
+        
+        const aiResponse = await generateAIResponse(advicePrompt, conversationHistoryWithPrefs, userPreferences);
+        const parsedMessage = parseMarkupResponse(aiResponse);
+        addMessage(parsedMessage, false);
+        setIsTyping(false);
+        return;
+      }
+
+      // Handle preference updates (legacy support)
+      const updatedPreferences = { ...userPreferences };
+      let hasUpdates = false;
+
+      if (parameters.style) {
+        updatedPreferences.style = parameters.style;
+        hasUpdates = true;
+      }
+      if (parameters.occasion) {
+        updatedPreferences.occasion = parameters.occasion;
+        hasUpdates = true;
+      }
+      if (parameters.budget) {
+        updatedPreferences.budget = parameters.budget;
+        hasUpdates = true;
+      }
+
+      if (hasUpdates) {
+        savePreferences(updatedPreferences);
+        setUserPreferences(updatedPreferences);
           
           // Check if we have enough info for recommendations
           const hasStyle = updatedPreferences.style;
@@ -464,13 +550,13 @@ function ChatAssistant() {
         return;
       }
 
-      // Use AI to generate conversational response
-      const conversationHistory = messages.map(msg => ({
-        text: msg.text,
-        isUser: msg.isUser
-      }));
+      // Use AI to generate conversational response with preferences context
+      const preferencesSummary = getPreferencesSummary();
+      const enhancedInput = preferencesSummary !== 'No preferences set yet' 
+        ? `${userInput} (Note: ${preferencesSummary})`
+        : userInput;
       
-      const aiResponse = await generateAIResponse(userInput, conversationHistory, userPreferences);
+      const aiResponse = await generateAIResponse(enhancedInput, conversationHistory, userPreferences);
       
       // Parse markup response and show AI response
       const parsedMessage = parseMarkupResponse(aiResponse);
