@@ -112,8 +112,11 @@ function MessageBubble({ message, isUser }) {
     return <>{content}</>;
   };
 
+  // Check if this is a search result message
+  const isSearchResult = message.type === 'products' && message.products;
+
   return (
-    <div className={`${styles.messageBubble} ${isUser ? styles.user : styles.ai}`}>
+    <div className={`${styles.messageBubble} ${isUser ? styles.user : styles.ai} ${isSearchResult ? styles.searchResult : ''}`}>
       {!isUser && <div className={styles.avatar}>A</div>}
       <div className={styles.content}>
         {renderContent()}

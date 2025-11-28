@@ -18,7 +18,7 @@ function BrandCard({ brand, onClick }) {
   return (
     <div className={styles.brandCard} onClick={handleClick}>
       <div className={styles.logoContainer}>
-        {!imageError ? (
+        {brand.logo && !imageError ? (
           <img 
             src={brand.logo} 
             alt={brand.name}

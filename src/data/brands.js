@@ -32,14 +32,14 @@ export const brands = [
   {
     id: 5,
     name: 'Gucci',
-    logo: 'https://cdn.simpleicons.org/gucci/000000',
+    logo: null, // SimpleIcons doesn't have Gucci - will use fallback emoji
     category: 'luxury',
     priceRange: '$$$$'
   },
   {
     id: 6,
     name: 'Prada',
-    logo: 'https://cdn.simpleicons.org/prada/000000',
+    logo: null, // SimpleIcons doesn't have Prada - will use fallback emoji
     category: 'luxury',
     priceRange: '$$$$'
   },

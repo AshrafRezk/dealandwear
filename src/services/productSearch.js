@@ -126,14 +126,28 @@ export const parseSearchQuery = (query) => {
 
 /**
  * Check if a message is a product search query
+ * Uses AI intent detection if available, falls back to pattern matching
  * @param {string} message - User message
- * @returns {boolean} - True if message appears to be a search query
+ * @param {Function} detectIntent - Optional AI intent detection function
+ * @returns {Promise<boolean>} - True if message appears to be a search query
  */
-export const isSearchQuery = (message) => {
+export const isSearchQuery = async (message, detectIntent = null) => {
   if (!message || message.trim().length < 2) {
     return false;
   }
 
+  // If AI intent detection is available, use it
+  if (detectIntent && typeof detectIntent === 'function') {
+    try {
+      const intentData = await detectIntent(message);
+      return intentData.intent === 'product_search';
+    } catch (error) {
+      console.warn('Intent detection failed, using fallback:', error);
+      // Fall through to pattern matching
+    }
+  }
+
+  // Fallback to pattern matching
   const lowerMessage = message.toLowerCase().trim();
   
   // Command-based search
@@ -141,24 +155,39 @@ export const isSearchQuery = (message) => {
     return true;
   }
 
-  // Natural language search patterns
+  // Natural language search patterns - expanded
+  const searchKeywords = ['find', 'search', 'show', 'look for', 'get me', 'i need', 'i want', 'looking for', 'where can i buy', 'where to buy', 'buy', 'purchase', 'show me'];
+  const productKeywords = ['clothing', 'clothes', 'fashion', 'dress', 'shirt', 'pants', 'jeans', 'shoes', 'jacket', 'sweater', 't-shirt', 'tshirt', 'top', 'bottom', 'outfit', 'accessory', 'bag', 'watch', 'jewelry'];
+  
+  const hasSearchKeyword = searchKeywords.some(keyword => lowerMessage.includes(keyword));
+  const hasProductKeyword = productKeywords.some(keyword => lowerMessage.includes(keyword));
+  const hasPriceQuery = /\b(under|below|over|above|less than|more than)\s+\d+/i.test(lowerMessage);
+  
+  // More flexible patterns
   const searchPatterns = [
-    /(find|search|show|look for|get me|i need|i want|looking for).*(clothing|clothes|fashion|dress|shirt|pants|jeans|shoes|jacket|sweater|t-shirt|tshirt)/i,
-    /(find|search|show|look for|get me|i need|i want|looking for).*\b(under|below|over|above)\s+\d+/i,
+    /(find|search|show|look for|get me|i need|i want|looking for|where can i buy|where to buy|buy|purchase).*(clothing|clothes|fashion|dress|shirt|pants|jeans|shoes|jacket|sweater|t-shirt|tshirt|top|bottom|outfit)/i,
+    /(find|search|show|look for|get me|i need|i want|looking for).*\b(under|below|over|above|less than|more than)\s+\d+/i,
     /(where can i buy|where to buy|buy|purchase).*/i,
     /(price|cost|how much).*(for|of).*/i
   ];
 
-  return searchPatterns.some(pattern => pattern.test(lowerMessage));
+  return (hasSearchKeyword && (hasProductKeyword || hasPriceQuery)) || 
+         searchPatterns.some(pattern => pattern.test(lowerMessage));
 };
 
 /**
  * Extract search query from command or natural language
  * @param {string} message - User message
+ * @param {Object} intentData - Optional intent detection data
  * @returns {string} - Extracted search query
  */
-export const extractSearchQuery = (message) => {
+export const extractSearchQuery = (message, intentData = null) => {
   if (!message) return '';
+
+  // If intent data is available and has search query, use it
+  if (intentData && intentData.extractedData && intentData.extractedData.searchQuery) {
+    return intentData.extractedData.searchQuery;
+  }
 
   // Handle command-based search
   if (message.startsWith('/search') || message.startsWith('/find')) {
@@ -168,11 +197,12 @@ export const extractSearchQuery = (message) => {
   }
 
   // For natural language, try to extract the product/item being searched
-  // Remove common search phrases
+  // Remove common search phrases - expanded list
   let query = message
-    .replace(/^(find|search|show|look for|get me|i need|i want|looking for|where can i buy|where to buy|buy|purchase)\s+/i, '')
-    .replace(/\s+(under|below|over|above|for|of|in|at)\s+\d+/gi, '')
+    .replace(/^(find|search|show|show me|look for|get me|i need|i want|looking for|where can i buy|where to buy|buy|purchase|need|want)\s+/i, '')
+    .replace(/\s+(under|below|over|above|less than|more than|for|of|in|at)\s+\d+/gi, '')
     .replace(/\b(egp|usd|eur|£|€|\$)\b/gi, '')
+    .replace(/\b(please|can you|could you|help me)\s+/gi, '')
     .trim();
 
   return query || message.trim();

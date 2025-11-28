@@ -14,6 +14,28 @@ if (!GEMINI_API_KEY) {
 }
 
 /**
+ * Get user-friendly error message for API errors
+ */
+const getErrorMessage = (status, statusText) => {
+  switch (status) {
+    case 400:
+      return 'Invalid request. Please try rephrasing your message.';
+    case 401:
+      return 'API authentication failed. Please check your API key configuration.';
+    case 403:
+      return 'API access forbidden. The API key may be invalid, restricted, or the service may not be available in your region.';
+    case 429:
+      return 'Too many requests. Please wait a moment and try again.';
+    case 500:
+      return 'The AI service is temporarily unavailable. Please try again later.';
+    case 503:
+      return 'The AI service is currently overloaded. Please try again in a moment.';
+    default:
+      return `AI service error (${status}). Please try again.`;
+  }
+};
+
+/**
  * Build system context from persona configuration
  * @param {Object} userPreferences - User's style preferences
  * @returns {string} - Formatted system context
@@ -97,6 +119,12 @@ export const generateAIResponse = async (userMessage, conversationHistory = [], 
       role: 'user'
     });
 
+    // Check if API key is available
+    if (!GEMINI_API_KEY) {
+      console.warn('Gemini API key not configured');
+      return getFallbackResponse(userMessage, userPreferences);
+    }
+
     const response = await fetch(GEMINI_API_URL, {
       method: 'POST',
       headers: {
@@ -109,7 +137,21 @@ export const generateAIResponse = async (userMessage, conversationHistory = [], 
     });
 
     if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
+      const errorMessage = getErrorMessage(response.status, response.statusText);
+      console.error(`Gemini API error: ${response.status} ${response.statusText}`);
+      
+      // Try to get error details from response
+      let errorDetails = '';
+      try {
+        const errorData = await response.json();
+        if (errorData.error && errorData.error.message) {
+          errorDetails = errorData.error.message;
+        }
+      } catch (e) {
+        // Ignore JSON parse errors
+      }
+      
+      throw new Error(`${errorMessage}${errorDetails ? ` Details: ${errorDetails}` : ''}`);
     }
 
     const data = await response.json();
@@ -117,10 +159,27 @@ export const generateAIResponse = async (userMessage, conversationHistory = [], 
     if (data.candidates && data.candidates[0] && data.candidates[0].content) {
       return data.candidates[0].content.parts[0].text;
     } else {
+      // Check for safety ratings or blocked content
+      if (data.candidates && data.candidates[0] && data.candidates[0].finishReason) {
+        const finishReason = data.candidates[0].finishReason;
+        if (finishReason !== 'STOP') {
+          console.warn(`Gemini API finish reason: ${finishReason}`);
+          if (finishReason === 'SAFETY') {
+            throw new Error('Your message was blocked by content safety filters. Please try rephrasing.');
+          }
+        }
+      }
       throw new Error('Invalid response format from API');
     }
   } catch (error) {
     console.error('Gemini API error:', error);
+    
+    // If it's a network error, provide helpful message
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      console.error('Network error - check internet connection');
+      return getFallbackResponse(userMessage, userPreferences);
+    }
+    
     // Return fallback response
     return getFallbackResponse(userMessage, userPreferences);
   }
@@ -158,20 +217,40 @@ const getFallbackResponse = (userMessage, userPreferences) => {
 };
 
 /**
- * Generate brand recommendations based on preferences
- * @param {Object} preferences - User preferences
- * @returns {Promise<string>} - AI recommendation text
+ * Detect user intent and extract preferences from natural language
+ * @param {string} userMessage - The user's message
+ * @param {Object} currentPreferences - Current user preferences
+ * @returns {Promise<Object>} - Intent classification and extracted data
  */
-export const generateBrandRecommendations = async (preferences) => {
-  const systemContext = buildSystemContext(preferences);
-  const prompt = `${systemContext}\n\nBased on these preferences:
-- Style: ${preferences.style || 'not specified'}
-- Occasion: ${preferences.occasion || 'not specified'}
-- Budget: ${preferences.budget || 'not specified'}
-
-Provide brand recommendations in the required JSON format. Be specific and mention why these brands work.`;
-
+export const detectUserIntent = async (userMessage, currentPreferences = {}) => {
   try {
+    if (!GEMINI_API_KEY) {
+      // Fallback to simple pattern matching
+      return detectIntentFallback(userMessage, currentPreferences);
+    }
+
+    const prompt = `Analyze this user message and classify the intent. Respond ONLY with valid JSON in this exact format:
+{
+  "intent": "style_preference" | "product_search" | "conversation" | "question" | "preference_update",
+  "confidence": 0.0-1.0,
+  "extractedData": {
+    "style": "string or null (e.g., 'smart casual', 'formal', 'streetwear')",
+    "occasion": "string or null (e.g., 'work', 'date', 'party')",
+    "budget": "string or null (e.g., '$', '$$', '$$$', '$$$$')",
+    "searchQuery": "string or null (if intent is product_search)",
+    "needsClarification": boolean
+  }
+}
+
+User message: "${userMessage}"
+Current preferences: ${JSON.stringify(currentPreferences)}
+
+Examples:
+- "I need something smart casual" → {"intent": "style_preference", "extractedData": {"style": "smart casual"}}
+- "find me blue jeans" → {"intent": "product_search", "extractedData": {"searchQuery": "blue jeans"}}
+- "what brands do you recommend?" → {"intent": "question"}
+- "I need formal wear for work under 500 EGP" → {"intent": "preference_update", "extractedData": {"style": "formal", "occasion": "work", "budget": "$$"}}`;
+
     const response = await fetch(GEMINI_API_URL, {
       method: 'POST',
       headers: {
@@ -187,7 +266,186 @@ Provide brand recommendations in the required JSON format. Be specific and menti
     });
 
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      console.warn('Intent detection API error, using fallback');
+      return detectIntentFallback(userMessage, currentPreferences);
+    }
+
+    const data = await response.json();
+    
+    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+      const responseText = data.candidates[0].content.parts[0].text;
+      
+      // Try to extract JSON from response (might have markdown code blocks)
+      let jsonText = responseText.trim();
+      if (jsonText.startsWith('```')) {
+        jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      }
+      
+      try {
+        const intentData = JSON.parse(jsonText);
+        return {
+          intent: intentData.intent || 'conversation',
+          confidence: intentData.confidence || 0.5,
+          extractedData: intentData.extractedData || {},
+          ...intentData
+        };
+      } catch (parseError) {
+        console.warn('Failed to parse intent detection response, using fallback');
+        return detectIntentFallback(userMessage, currentPreferences);
+      }
+    } else {
+      return detectIntentFallback(userMessage, currentPreferences);
+    }
+  } catch (error) {
+    console.error('Intent detection error:', error);
+    return detectIntentFallback(userMessage, currentPreferences);
+  }
+};
+
+/**
+ * Fallback intent detection using pattern matching
+ * @param {string} userMessage - The user's message
+ * @param {Object} currentPreferences - Current user preferences
+ * @returns {Object} - Intent classification
+ */
+const detectIntentFallback = (userMessage, currentPreferences = {}) => {
+  const lowerMessage = userMessage.toLowerCase().trim();
+  const extractedData = {};
+  
+  // Detect style preferences
+  const stylePatterns = {
+    'smart casual': /smart\s+casual|business\s+casual/i,
+    'casual': /\bcasual\b/i,
+    'formal': /\bformal\b/i,
+    'streetwear': /\bstreetwear|street\s+wear\b/i,
+    'business': /\bbusiness\b/i,
+    'sporty': /\bsporty|athletic\b/i,
+    'elegant': /\belegant\b/i,
+    'minimalist': /\bminimalist\b/i
+  };
+  
+  for (const [style, pattern] of Object.entries(stylePatterns)) {
+    if (pattern.test(lowerMessage)) {
+      extractedData.style = style;
+      break;
+    }
+  }
+  
+  // Detect occasion
+  const occasionPatterns = {
+    'work': /\bwork|office|professional\b/i,
+    'date': /\bdate|romantic\b/i,
+    'party': /\bparty|celebration|event\b/i,
+    'everyday': /\beveryday|daily|casual\b/i,
+    'special event': /\bspecial\s+event|wedding|formal\s+event\b/i
+  };
+  
+  for (const [occasion, pattern] of Object.entries(occasionPatterns)) {
+    if (pattern.test(lowerMessage)) {
+      extractedData.occasion = occasion;
+      break;
+    }
+  }
+  
+  // Detect budget
+  if (/\bunder\s+\d+|below\s+\d+|budget|affordable|cheap\b/i.test(lowerMessage)) {
+    extractedData.budget = '$';
+  } else if (/\bmoderate|mid\s+range|medium\b/i.test(lowerMessage)) {
+    extractedData.budget = '$$';
+  } else if (/\bpremium|high\s+end|expensive\b/i.test(lowerMessage)) {
+    extractedData.budget = '$$$';
+  } else if (/\bluxury|designer|exclusive\b/i.test(lowerMessage)) {
+    extractedData.budget = '$$$$';
+  }
+  
+  // Detect product search
+  const searchKeywords = ['find', 'search', 'show me', 'looking for', 'need', 'want', 'buy', 'where can i'];
+  const isSearch = searchKeywords.some(keyword => lowerMessage.includes(keyword)) &&
+                   (lowerMessage.includes('shirt') || lowerMessage.includes('jeans') || 
+                    lowerMessage.includes('dress') || lowerMessage.includes('jacket') ||
+                    lowerMessage.includes('shoes') || lowerMessage.includes('pants'));
+  
+  if (isSearch) {
+    // Extract search query
+    const searchQuery = userMessage
+      .replace(/^(find|search|show me|looking for|need|want|buy|where can i)\s+/i, '')
+      .trim();
+    extractedData.searchQuery = searchQuery || userMessage;
+    
+    return {
+      intent: 'product_search',
+      confidence: 0.7,
+      extractedData
+    };
+  }
+  
+  // If style/occasion/budget detected, it's a preference update
+  if (extractedData.style || extractedData.occasion || extractedData.budget) {
+    return {
+      intent: 'preference_update',
+      confidence: 0.8,
+      extractedData
+    };
+  }
+  
+  // Check if it's a question
+  if (lowerMessage.startsWith('what') || lowerMessage.startsWith('how') || 
+      lowerMessage.startsWith('why') || lowerMessage.startsWith('when') ||
+      lowerMessage.includes('?')) {
+    return {
+      intent: 'question',
+      confidence: 0.6,
+      extractedData: {}
+    };
+  }
+  
+  // Default to conversation
+  return {
+    intent: 'conversation',
+    confidence: 0.5,
+    extractedData: {}
+  };
+};
+
+/**
+ * Generate brand recommendations based on preferences
+ * @param {Object} preferences - User preferences
+ * @returns {Promise<string>} - AI recommendation text
+ */
+export const generateBrandRecommendations = async (preferences) => {
+  const systemContext = buildSystemContext(preferences);
+  const prompt = `${systemContext}\n\nBased on these preferences:
+- Style: ${preferences.style || 'not specified'}
+- Occasion: ${preferences.occasion || 'not specified'}
+- Budget: ${preferences.budget || 'not specified'}
+
+Provide brand recommendations in the required JSON format. Be specific and mention why these brands work.`;
+
+  try {
+    // Check if API key is available
+    if (!GEMINI_API_KEY) {
+      console.warn('Gemini API key not configured');
+      return `Based on your preferences for ${preferences.style || 'style'}, ${preferences.occasion || 'occasion'}, and ${preferences.budget || 'budget'} budget, I have some excellent brand recommendations for you.`;
+    }
+
+    const response = await fetch(GEMINI_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-goog-api-key': GEMINI_API_KEY
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{ text: prompt }],
+          role: 'user'
+        }]
+      })
+    });
+
+    if (!response.ok) {
+      const errorMessage = getErrorMessage(response.status, response.statusText);
+      console.error(`Gemini API error: ${response.status} ${response.statusText}`);
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();

@@ -60,6 +60,17 @@
   border-bottom-left-radius: 4px;
 }
 
+/* Search result messages have a subtle blue tint */
+.messageBubble.searchResult .text {
+  background: #f0f7ff;
+  border-color: #007aff;
+  color: #1d1d1f;
+}
+
+.messageBubble.searchResult .productsContainer {
+  margin-top: 8px;
+}
+
 .user .text {
   background: #1d1d1f;
   color: #ffffff;
