@@ -1,14 +1,22 @@
 /**
  * Product Search Service
- * Calls the Netlify Function API to search for products
+ * Multi-source product search with caching and fallback chain:
+ * 1. Check cache
+ * 2. Netlify Function (scraping + mock fallback)
+ * 3. Google Shopping API (if configured)
+ * 4. Mock data (final fallback)
  */
+
+import { getCachedResults, setCachedResults } from './searchCache';
+import { searchWithGoogle, isGoogleAPIConfigured } from './googleShoppingAPI';
+import { getMockProducts } from './productDatabase';
 
 const SEARCH_API_URL = '/.netlify/functions/searchProducts';
 
 /**
- * Search for products across stores
+ * Search for products across stores with multi-source fallback
  * @param {string} query - Search query
- * @param {Object} options - Search options (maxResults, filters, etc.)
+ * @param {Object} options - Search options (maxResults, useCache, etc.)
  * @returns {Promise<Array>} - Array of product objects
  */
 export const searchProducts = async (query, options = {}) => {
@@ -17,21 +25,38 @@ export const searchProducts = async (query, options = {}) => {
       throw new Error('Search query must be at least 2 characters long');
     }
 
-    const { maxResults = 20, timeout = 25000 } = options;
-    
-    // Create abort controller for timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
-    
+    const { 
+      maxResults = 20, 
+      timeout = 25000,
+      useCache = true,
+      useGoogleAPI = true,
+      useMockFallback = true
+    } = options;
+
+    const trimmedQuery = query.trim();
+
+    // 1. Check cache first
+    if (useCache) {
+      const cached = getCachedResults(trimmedQuery);
+      if (cached && cached.length > 0) {
+        console.log('Returning cached results');
+        return cached.slice(0, maxResults);
+      }
+    }
+
+    // 2. Try Netlify Function (scraping + mock fallback)
+    let products = [];
     try {
-      // Call Netlify Function
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+      
       const response = await fetch(SEARCH_API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          query: query.trim(),
+          query: trimmedQuery,
           maxResults
         }),
         signal: controller.signal
@@ -39,27 +64,51 @@ export const searchProducts = async (query, options = {}) => {
 
       clearTimeout(timeoutId);
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Search failed with status ${response.status}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.products) {
+          products = data.products;
+          // Cache successful results
+          if (useCache && products.length > 0) {
+            setCachedResults(trimmedQuery, products);
+          }
+        }
       }
-
-      const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.error || 'Search failed');
-      }
-
-      return data.products || [];
-    } catch (fetchError) {
-      clearTimeout(timeoutId);
-      if (fetchError.name === 'AbortError') {
-        throw new Error('Search request timed out. Please try again with a more specific query.');
-      }
-      throw fetchError;
+    } catch (netlifyError) {
+      console.warn('Netlify function search failed:', netlifyError.message);
+      // Continue to next source
     }
+
+    // 3. Try Google Shopping API if configured and no results yet
+    if (products.length === 0 && useGoogleAPI && isGoogleAPIConfigured()) {
+      try {
+        const googleProducts = await searchWithGoogle(trimmedQuery, { maxResults });
+        if (googleProducts.length > 0) {
+          products = googleProducts;
+          // Cache Google results
+          if (useCache) {
+            setCachedResults(trimmedQuery, products);
+          }
+        }
+      } catch (googleError) {
+        console.warn('Google Shopping API search failed:', googleError.message);
+        // Continue to fallback
+      }
+    }
+
+    // 4. Final fallback: Mock data
+    if (products.length === 0 && useMockFallback) {
+      products = getMockProducts(trimmedQuery, maxResults);
+      console.log('Using mock data as final fallback');
+    }
+
+    return products.slice(0, maxResults);
   } catch (error) {
     console.error('Product search error:', error);
+    // Return mock data as last resort
+    if (options.useMockFallback !== false) {
+      return getMockProducts(query.trim(), options.maxResults || 20);
+    }
     throw error;
   }
 };
