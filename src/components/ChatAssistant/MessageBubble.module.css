@@ -73,6 +73,33 @@
   padding: 8px 0;
 }
 
+.productsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 8px 0;
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  .productsContainer {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (min-width: 769px) {
+  .productsContainer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .productsContainer {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 .optionsContainer {
   display: flex;
   flex-direction: column;
@@ -112,6 +139,97 @@
 
 .user .timestamp {
   text-align: right;
+}
+
+.list {
+  margin: 8px 0;
+  padding: 12px 16px 12px 32px;
+  background: #ffffff;
+  border: 1px solid #d2d2d7;
+  border-radius: 18px;
+  border-bottom-left-radius: 4px;
+  list-style: none;
+}
+
+.list.numbered {
+  padding-left: 32px;
+  counter-reset: list-counter;
+}
+
+.listItem {
+  margin: 6px 0;
+  line-height: 1.5;
+  color: #1d1d1f;
+  position: relative;
+  padding-left: 20px;
+}
+
+.listItem::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #86868b;
+  font-weight: bold;
+}
+
+.list.numbered .listItem {
+  counter-increment: list-counter;
+  padding-left: 24px;
+}
+
+.list.numbered .listItem::before {
+  content: counter(list-counter) '.';
+  font-weight: 500;
+}
+
+.recommendationsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.recommendation {
+  padding: 12px 16px;
+  background: #ffffff;
+  border: 1px solid #d2d2d7;
+  border-radius: 12px;
+}
+
+.recommendationTitle {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.recommendationDescription {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #86868b;
+  line-height: 1.5;
+}
+
+.recommendationItems {
+  margin: 8px 0 0 0;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.recommendationItems li {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #1d1d1f;
+  line-height: 1.5;
+  position: relative;
+  padding-left: 16px;
+}
+
+.recommendationItems li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #86868b;
 }
 
 @media (max-width: 767px) {

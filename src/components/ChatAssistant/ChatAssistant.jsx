@@ -4,6 +4,8 @@ import styles from './ChatAssistant.module.css';
 import { brands } from '../../data/brands';
 import { hapticMessage, hapticSelect } from '../../utils/haptics';
 import { generateAIResponse, generateBrandRecommendations } from '../../services/gemini';
+import { parseMarkupResponse } from '../../utils/markupParser';
+import { searchProducts, isSearchQuery, extractSearchQuery } from '../../services/productSearch';
 
 const AI_NAME = 'Aria';
 
@@ -75,7 +77,9 @@ function ChatAssistant() {
       
       generateAIResponse(userInput, conversationHistory, userPreferences)
         .then(aiResponse => {
-          addMessage({ text: aiResponse }, false);
+          // Parse markup response into message format
+          const parsedMessage = parseMarkupResponse(aiResponse);
+          addMessage(parsedMessage, false);
           setIsTyping(false);
         })
         .catch(error => {
@@ -164,8 +168,11 @@ function ChatAssistant() {
     setIsTyping(true);
     try {
       const aiRecommendation = await generateBrandRecommendations(userPreferences);
+      // Parse markup response
+      const parsedMessage = parseMarkupResponse(aiRecommendation);
+      // Merge with brand data
       addMessage({
-        text: aiRecommendation,
+        ...parsedMessage,
         type: 'brands',
         brands: recommendedBrands.map(b => b.id)
       }, false);
@@ -220,6 +227,55 @@ function ChatAssistant() {
     }, 500);
   };
 
+  const searchProductsHandler = async (query) => {
+    setIsTyping(true);
+    try {
+      const searchQuery = extractSearchQuery(query);
+      
+      if (!searchQuery || searchQuery.length < 2) {
+        addMessage({
+          text: `Please provide a more specific search query (at least 2 characters). For example: "blue jeans", "dresses", or "winter jackets".`
+        }, false);
+        setIsTyping(false);
+        return;
+      }
+
+      const products = await searchProducts(searchQuery, { maxResults: 20 });
+
+      if (products.length > 0) {
+        addMessage({
+          text: `I found ${products.length} product${products.length > 1 ? 's' : ''} for "${searchQuery}":`,
+          type: 'products',
+          products: products
+        }, false);
+      } else {
+        addMessage({
+          text: `I couldn't find any products for "${searchQuery}". Try:\n• Using different keywords\n• Being more specific (e.g., "blue denim jeans" instead of "jeans")\n• Checking back later as stores update their inventory`
+        }, false);
+      }
+    } catch (error) {
+      console.error('Search error:', error);
+      
+      let errorMessage = `Sorry, I encountered an error while searching for "${extractSearchQuery(query)}". `;
+      
+      if (error.message.includes('timeout') || error.message.includes('Timeout')) {
+        errorMessage += 'The search took too long. Please try again with a more specific query.';
+      } else if (error.message.includes('network') || error.message.includes('fetch')) {
+        errorMessage += 'There seems to be a network issue. Please check your connection and try again.';
+      } else if (error.message.includes('400') || error.message.includes('Bad Request')) {
+        errorMessage += 'The search query might be invalid. Please try rephrasing your search.';
+      } else {
+        errorMessage += 'Please try again in a moment.';
+      }
+      
+      addMessage({
+        text: errorMessage
+      }, false);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
   const handleSend = async (e) => {
     e.preventDefault();
     if (!inputValue.trim() || isTyping) return;
@@ -229,6 +285,12 @@ function ChatAssistant() {
     const userInput = inputValue.trim();
     addMessage(userMessage, true);
     setInputValue('');
+
+    // Check if this is a product search query
+    if (isSearchQuery(userInput)) {
+      await searchProductsHandler(userInput);
+      return;
+    }
 
     // Use AI to generate response
     setIsTyping(true);
@@ -256,8 +318,9 @@ function ChatAssistant() {
         }
       }
       
-      // Show AI response with potential options
-      addMessage({ text: aiResponse }, false);
+      // Parse markup response and show AI response with potential options
+      const parsedMessage = parseMarkupResponse(aiResponse);
+      addMessage(parsedMessage, false);
       setIsTyping(false);
       
       // Offer to continue with guided experience if in welcome stage
