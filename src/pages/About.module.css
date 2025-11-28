@@ -71,11 +71,11 @@
 }
 
 .featureIcon {
-  font-size: 14px;
-  font-weight: 600;
-  color: #86868b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1d1d1f;
   margin-bottom: 16px;
-  letter-spacing: 1px;
 }
 
 .featureTitle {

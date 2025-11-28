@@ -3,6 +3,7 @@ import MessageBubble from './MessageBubble';
 import styles from './ChatAssistant.module.css';
 import { brands } from '../../data/brands';
 import { hapticMessage, hapticSelect } from '../../utils/haptics';
+import { generateAIResponse, generateBrandRecommendations } from '../../services/gemini';
 
 const AI_NAME = 'Aria';
 
@@ -62,12 +63,34 @@ function ChatAssistant() {
     setMessages(prev => [...prev, newMessage]);
   };
 
-  const addAIMessage = (message) => {
+  const addAIMessage = (message, useAI = false, userInput = '') => {
     setIsTyping(true);
-    setTimeout(() => {
-      addMessage(message, false);
-      setIsTyping(false);
-    }, 800);
+    
+    if (useAI && userInput) {
+      // Use real AI for response
+      const conversationHistory = messages.map(msg => ({
+        text: msg.text,
+        isUser: msg.isUser
+      }));
+      
+      generateAIResponse(userInput, conversationHistory, userPreferences)
+        .then(aiResponse => {
+          addMessage({ text: aiResponse }, false);
+          setIsTyping(false);
+        })
+        .catch(error => {
+          console.error('AI error:', error);
+          // Fallback to original message if AI fails
+          addMessage(message, false);
+          setIsTyping(false);
+        });
+    } else {
+      // Use predefined message
+      setTimeout(() => {
+        addMessage(message, false);
+        setIsTyping(false);
+      }, 800);
+    }
   };
 
   const askStylePreference = () => {
@@ -118,7 +141,7 @@ function ChatAssistant() {
     });
   };
 
-  const showRecommendations = () => {
+  const showRecommendations = async () => {
     setConversationStage(CONVERSATION_STAGES.RECOMMENDATIONS);
     
     // Filter brands based on preferences
@@ -137,11 +160,25 @@ function ChatAssistant() {
     // Take top 6 brands
     recommendedBrands = recommendedBrands.slice(0, 6);
     
-    addAIMessage({
-      text: `Perfect! Based on your preferences for ${userPreferences.style || 'style'}, ${userPreferences.occasion || 'occasion'}, and ${userPreferences.budget || 'budget'} budget, here are my top brand recommendations:`,
-      type: 'brands',
-      brands: recommendedBrands.map(b => b.id)
-    });
+    // Use AI to generate personalized recommendation text
+    setIsTyping(true);
+    try {
+      const aiRecommendation = await generateBrandRecommendations(userPreferences);
+      addMessage({
+        text: aiRecommendation,
+        type: 'brands',
+        brands: recommendedBrands.map(b => b.id)
+      }, false);
+    } catch (error) {
+      console.error('AI recommendation error:', error);
+      // Fallback to default message
+      addMessage({
+        text: `Perfect! Based on your preferences for ${userPreferences.style || 'style'}, ${userPreferences.occasion || 'occasion'}, and ${userPreferences.budget || 'budget'} budget, here are my top brand recommendations:`,
+        type: 'brands',
+        brands: recommendedBrands.map(b => b.id)
+      }, false);
+    }
+    setIsTyping(false);
     
     setTimeout(() => {
       addAIMessage({
@@ -183,18 +220,65 @@ function ChatAssistant() {
     }, 500);
   };
 
-  const handleSend = (e) => {
+  const handleSend = async (e) => {
     e.preventDefault();
     if (!inputValue.trim() || isTyping) return;
 
     hapticMessage();
     const userMessage = { text: inputValue };
+    const userInput = inputValue.trim();
     addMessage(userMessage, true);
     setInputValue('');
 
-    // Simulate AI response
+    // Use AI to generate response
     setIsTyping(true);
-    setTimeout(() => {
+    try {
+      const conversationHistory = messages.map(msg => ({
+        text: msg.text,
+        isUser: msg.isUser
+      }));
+      
+      const aiResponse = await generateAIResponse(userInput, conversationHistory, userPreferences);
+      
+      // Check if user is asking to start over or continue
+      const lowerInput = userInput.toLowerCase();
+      if (lowerInput.includes('start over') || lowerInput.includes('reset') || lowerInput.includes('new')) {
+        resetConversation();
+        setIsTyping(false);
+        return;
+      }
+      
+      if (lowerInput.includes('continue') || lowerInput.includes('yes') || lowerInput.includes('sure')) {
+        if (conversationStage === CONVERSATION_STAGES.WELCOME) {
+          setIsTyping(false);
+          setTimeout(() => askStylePreference(), 500);
+          return;
+        }
+      }
+      
+      // Show AI response with potential options
+      addMessage({ text: aiResponse }, false);
+      setIsTyping(false);
+      
+      // Offer to continue with guided experience if in welcome stage
+      if (conversationStage === CONVERSATION_STAGES.WELCOME) {
+        setTimeout(() => {
+          addAIMessage({
+            text: "Would you like to continue with the guided experience to get personalized brand recommendations?",
+            options: ['Yes, continue', 'Keep chatting'],
+            onOptionClick: (option) => {
+              hapticSelect();
+              if (option === 'Yes, continue') {
+                askStylePreference();
+              }
+            }
+          });
+        }, 500);
+      }
+    } catch (error) {
+      console.error('AI error:', error);
+      setIsTyping(false);
+      // Fallback response
       addAIMessage({
         text: "Thanks for your input! Let me help you find the perfect style. Would you like to continue with the guided experience?",
         options: ['Yes, continue', 'Start over'],
@@ -209,7 +293,7 @@ function ChatAssistant() {
           }
         }
       });
-    }, 1000);
+    }
   };
 
   return (

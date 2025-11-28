@@ -1,6 +1,9 @@
 import { NavLink } from 'react-router-dom';
 import styles from './MobileNav.module.css';
 import { hapticNavigate } from '../../utils/haptics';
+import StyleIcon from '@mui/icons-material/Style';
+import InfoIcon from '@mui/icons-material/Info';
+import ContactMailIcon from '@mui/icons-material/ContactMail';
 
 function MobileNav() {
   return (
@@ -10,7 +13,7 @@ function MobileNav() {
         className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
         onClick={() => hapticNavigate()}
       >
-        <span className={styles.icon}>Style</span>
+        <StyleIcon className={styles.icon} />
         <span className={styles.label}>Style</span>
       </NavLink>
       <NavLink 
@@ -18,7 +21,7 @@ function MobileNav() {
         className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
         onClick={() => hapticNavigate()}
       >
-        <span className={styles.icon}>About</span>
+        <InfoIcon className={styles.icon} />
         <span className={styles.label}>About</span>
       </NavLink>
       <NavLink 
@@ -26,7 +29,7 @@ function MobileNav() {
         className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
         onClick={() => hapticNavigate()}
       >
-        <span className={styles.icon}>Contact</span>
+        <ContactMailIcon className={styles.icon} />
         <span className={styles.label}>Contact</span>
       </NavLink>
     </nav>

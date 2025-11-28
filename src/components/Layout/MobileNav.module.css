@@ -28,10 +28,9 @@
 }
 
 .navItem .icon {
-  font-size: 11px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
   transition: all 0.2s;
 }
 

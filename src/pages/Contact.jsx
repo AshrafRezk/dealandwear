@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import styles from './Contact.module.css';
 import { hapticSuccess, hapticButton } from '../utils/haptics';
+import EmailIcon from '@mui/icons-material/Email';
+import PublicIcon from '@mui/icons-material/Public';
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -89,13 +92,17 @@ function Contact() {
 
           <div className={styles.infoSection}>
             <div className={styles.infoCard}>
-              <div className={styles.infoIcon}>Email</div>
+              <div className={styles.infoIcon}>
+                <EmailIcon sx={{ fontSize: 48 }} />
+              </div>
               <h3 className={styles.infoTitle}>Email</h3>
               <p className={styles.infoText}>hello@dealandwear.com</p>
             </div>
 
             <div className={styles.infoCard}>
-              <div className={styles.infoIcon}>Social</div>
+              <div className={styles.infoIcon}>
+                <PublicIcon sx={{ fontSize: 48 }} />
+              </div>
               <h3 className={styles.infoTitle}>Follow Us</h3>
               <div className={styles.socialLinks}>
                 <a href="https://www.instagram.com/deal.andwear" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
@@ -105,7 +112,9 @@ function Contact() {
             </div>
 
             <div className={styles.infoCard}>
-              <div className={styles.infoIcon}>Chat</div>
+              <div className={styles.infoIcon}>
+                <ChatBubbleIcon sx={{ fontSize: 48 }} />
+              </div>
               <h3 className={styles.infoTitle}>Chat Support</h3>
               <p className={styles.infoText}>
                 Connect with Aria, our AI styling assistant, on the home page.

@@ -121,11 +121,10 @@
 }
 
 .infoIcon {
-  font-size: 12px;
-  font-weight: 600;
-  color: #86868b;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1d1d1f;
   margin-bottom: 16px;
 }
 

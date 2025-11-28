@@ -1,4 +1,7 @@
 import styles from './About.module.css';
+import ChatIcon from '@mui/icons-material/Chat';
+import TargetIcon from '@mui/icons-material/TrackChanges';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 function About() {
   return (
@@ -22,7 +25,9 @@ function About() {
           <h2 className={styles.sectionTitle}>How It Works</h2>
           <div className={styles.features}>
             <div className={styles.feature}>
-              <div className={styles.featureIcon}>01</div>
+              <div className={styles.featureIcon}>
+                <ChatIcon sx={{ fontSize: 48 }} />
+              </div>
               <h3 className={styles.featureTitle}>Chat with Aria</h3>
               <p className={styles.featureText}>
                 Have a conversation with our AI styling assistant. Answer a few simple questions 
@@ -30,7 +35,9 @@ function About() {
               </p>
             </div>
             <div className={styles.feature}>
-              <div className={styles.featureIcon}>02</div>
+              <div className={styles.featureIcon}>
+                <TargetIcon sx={{ fontSize: 48 }} />
+              </div>
               <h3 className={styles.featureTitle}>Get Recommendations</h3>
               <p className={styles.featureText}>
                 Receive personalized brand and outfit recommendations tailored to your style, 
@@ -38,7 +45,9 @@ function About() {
               </p>
             </div>
             <div className={styles.feature}>
-              <div className={styles.featureIcon}>03</div>
+              <div className={styles.featureIcon}>
+                <AutoAwesomeIcon sx={{ fontSize: 48 }} />
+              </div>
               <h3 className={styles.featureTitle}>Discover Your Style</h3>
               <p className={styles.featureText}>
                 Explore brands from budget-friendly to luxury, all curated to match your unique 
