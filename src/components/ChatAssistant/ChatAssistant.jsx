@@ -30,7 +30,8 @@ function ChatAssistant() {
         text: `Hello, I'm ${AI_NAME}, your personal styling assistant. Let's discover your perfect style together.`,
         options: ['Let\'s start', 'Tell me more'],
         onOptionClick: (option) => {
-          if (option === "Let's start!") {
+          hapticSelect();
+          if (option === "Let's start") {
             askStylePreference();
           } else {
             addAIMessage({
