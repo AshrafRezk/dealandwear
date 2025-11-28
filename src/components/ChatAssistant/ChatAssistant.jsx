@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import MessageBubble from './MessageBubble';
 import styles from './ChatAssistant.module.css';
 import { brands } from '../../data/brands';
+import { hapticMessage, hapticSelect } from '../../utils/haptics';
 
 const AI_NAME = 'Aria';
 
@@ -74,6 +75,7 @@ function ChatAssistant() {
       text: "What's your style preference?",
       options: ['Casual', 'Formal', 'Streetwear', 'Business', 'Sporty'],
       onOptionClick: (option) => {
+        hapticSelect();
         setUserPreferences(prev => ({ ...prev, style: option.toLowerCase() }));
         addMessage({ text: option }, true);
         setTimeout(() => askOccasion(), 500);
@@ -87,6 +89,7 @@ function ChatAssistant() {
       text: "What's the occasion?",
       options: ['Work', 'Date', 'Party', 'Everyday', 'Special Event'],
       onOptionClick: (option) => {
+        hapticSelect();
         setUserPreferences(prev => ({ ...prev, occasion: option.toLowerCase() }));
         addMessage({ text: option }, true);
         setTimeout(() => askBudget(), 500);
@@ -99,7 +102,8 @@ function ChatAssistant() {
     addAIMessage({
       text: "What's your budget range?",
       options: ['Budget-friendly ($)', 'Moderate ($$)', 'Premium ($$$)', 'Luxury ($$$$)'],
-      onOptionClick: (option) => {
+        onOptionClick: (option) => {
+        hapticSelect();
         const budgetMap = {
           'Budget-friendly ($)': '$',
           'Moderate ($$)': '$$',
@@ -143,6 +147,7 @@ function ChatAssistant() {
         text: "Would you like to explore more options or start a new style consultation?",
         options: ['Explore more', 'New consultation', 'I\'m good, thanks!'],
         onOptionClick: (option) => {
+          hapticSelect();
           if (option === 'New consultation') {
             resetConversation();
           } else if (option === 'Explore more') {
@@ -169,7 +174,10 @@ function ChatAssistant() {
       addAIMessage({
         text: "Let's start fresh! What style are you looking for today?",
         options: ['Let\'s start!'],
-        onOptionClick: () => askStylePreference()
+        onOptionClick: () => {
+          hapticSelect();
+          askStylePreference();
+        }
       });
     }, 500);
   };
@@ -178,6 +186,7 @@ function ChatAssistant() {
     e.preventDefault();
     if (!inputValue.trim() || isTyping) return;
 
+    hapticMessage();
     const userMessage = { text: inputValue };
     addMessage(userMessage, true);
     setInputValue('');
@@ -189,6 +198,7 @@ function ChatAssistant() {
         text: "Thanks for your input! Let me help you find the perfect style. Would you like to continue with the guided experience?",
         options: ['Yes, continue', 'Start over'],
         onOptionClick: (option) => {
+          hapticSelect();
           if (option === 'Start over') {
             resetConversation();
           } else {

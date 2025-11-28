@@ -1,6 +1,7 @@
 import styles from './MessageBubble.module.css';
 import BrandCard from './BrandCard';
 import { brands } from '../../data/brands';
+import { hapticSelect } from '../../utils/haptics';
 
 function MessageBubble({ message, isUser }) {
   const renderContent = () => {
@@ -28,7 +29,10 @@ function MessageBubble({ message, isUser }) {
             <button
               key={index}
               className={styles.optionButton}
-              onClick={() => message.onOptionClick?.(option)}
+              onClick={() => {
+                hapticSelect();
+                message.onOptionClick?.(option);
+              }}
             >
               {option}
             </button>

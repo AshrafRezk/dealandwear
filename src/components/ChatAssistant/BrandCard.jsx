@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styles from './BrandCard.module.css';
 import { brandEmojis } from '../../data/brands';
+import { hapticSelect } from '../../utils/haptics';
 
 function BrandCard({ brand, onClick }) {
   const [imageError, setImageError] = useState(false);
@@ -9,8 +10,13 @@ function BrandCard({ brand, onClick }) {
     setImageError(true);
   };
 
+  const handleClick = () => {
+    hapticSelect();
+    onClick?.();
+  };
+
   return (
-    <div className={styles.brandCard} onClick={onClick}>
+    <div className={styles.brandCard} onClick={handleClick}>
       <div className={styles.logoContainer}>
         {!imageError ? (
           <img 

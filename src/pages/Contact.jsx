@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styles from './Contact.module.css';
+import { hapticSuccess, hapticButton } from '../utils/haptics';
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -18,6 +19,7 @@ function Contact() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    hapticSuccess();
     // Simulate form submission
     console.log('Form submitted:', formData);
     setSubmitted(true);

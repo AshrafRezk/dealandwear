@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import styles from './InstallPrompt.module.css';
+import { hapticAction, hapticButton } from '../../utils/haptics';
 
 function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -40,6 +41,7 @@ function InstallPrompt() {
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
 
+    hapticAction();
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
 
@@ -53,6 +55,7 @@ function InstallPrompt() {
   };
 
   const handleDismiss = () => {
+    hapticButton();
     setShowPrompt(false);
     localStorage.setItem('pwa-install-dismissed', Date.now().toString());
   };
