@@ -3,8 +3,13 @@
  * Handles AI-powered conversations for the styling assistant
  */
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyDujZbWYOAkg8fFOENqnffKooDRG2xJ3lc';
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+
+// Validate API key is available
+if (!GEMINI_API_KEY) {
+  console.warn('VITE_GEMINI_API_KEY is not set. AI features may not work properly.');
+}
 
 /**
  * Generate AI response using Gemini API

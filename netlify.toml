@@ -2,6 +2,10 @@
   command = "npm run build"
   publish = "dist"
 
+# Allow VITE_GEMINI_API_KEY in build output (client-side API key)
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "VITE_GEMINI_API_KEY"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
