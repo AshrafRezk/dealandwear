@@ -464,81 +464,80 @@ function ChatAssistant() {
       if (hasUpdates) {
         savePreferences(updatedPreferences);
         setUserPreferences(updatedPreferences);
+        
+        // Check if we have enough info for recommendations
+        const hasStyle = updatedPreferences.style;
+        const hasOccasion = updatedPreferences.occasion;
+        const hasBudget = updatedPreferences.budget;
+
+        if (hasStyle && hasOccasion && hasBudget) {
+          // We have all preferences, show recommendations
+          setIsTyping(false);
+          setTimeout(() => showRecommendations(), 500);
+          return;
+        } else {
+          // Ask for missing information naturally
+          setIsTyping(false);
+          const missing = [];
+          if (!hasStyle) missing.push('style preference');
+          if (!hasOccasion) missing.push('occasion');
+          if (!hasBudget) missing.push('budget range');
+
+          let followUpText = "Got it! ";
+          if (parameters.style) followUpText += `I see you're looking for ${parameters.style} style. `;
+          if (parameters.occasion) followUpText += `For ${parameters.occasion}, `;
+          if (parameters.budget) followUpText += `with a ${parameters.budget === '$' ? 'budget-friendly' : parameters.budget === '$$' ? 'moderate' : parameters.budget === '$$$' ? 'premium' : 'luxury'} budget. `;
           
-          // Check if we have enough info for recommendations
-          const hasStyle = updatedPreferences.style;
-          const hasOccasion = updatedPreferences.occasion;
-          const hasBudget = updatedPreferences.budget;
-
-          if (hasStyle && hasOccasion && hasBudget) {
-            // We have all preferences, show recommendations
-            setIsTyping(false);
-            setTimeout(() => showRecommendations(), 500);
-            return;
-          } else {
-            // Ask for missing information naturally
-            setIsTyping(false);
-            const missing = [];
-            if (!hasStyle) missing.push('style preference');
-            if (!hasOccasion) missing.push('occasion');
-            if (!hasBudget) missing.push('budget range');
-
-            let followUpText = "Got it! ";
-            if (extractedData.style) followUpText += `I see you're looking for ${extractedData.style} style. `;
-            if (extractedData.occasion) followUpText += `For ${extractedData.occasion}, `;
-            if (extractedData.budget) followUpText += `with a ${extractedData.budget === '$' ? 'budget-friendly' : extractedData.budget === '$$' ? 'moderate' : extractedData.budget === '$$$' ? 'premium' : 'luxury'} budget. `;
-            
-            if (missing.length > 0) {
-              followUpText += `To give you the best recommendations, could you tell me ${missing.length === 1 ? 'your ' + missing[0] : 'about ' + missing.join(' and ')}?`;
-            }
-
-            addAIMessage({
-              text: followUpText,
-              options: missing.includes('style preference') ? ['Casual', 'Formal', 'Smart Casual', 'Streetwear'] : 
-                       missing.includes('occasion') ? ['Work', 'Date', 'Party', 'Everyday'] :
-                       missing.includes('budget range') ? ['Budget-friendly ($)', 'Moderate ($$)', 'Premium ($$$)', 'Luxury ($$$$)'] : [],
-              onOptionClick: (option) => {
-                hapticSelect();
-                const newPrefs = { ...updatedPreferences };
-                if (missing.includes('style preference')) {
-                  newPrefs.style = option.toLowerCase();
-                } else if (missing.includes('occasion')) {
-                  newPrefs.occasion = option.toLowerCase();
-                } else if (missing.includes('budget range')) {
-                  const budgetMap = {
-                    'Budget-friendly ($)': '$',
-                    'Moderate ($$)': '$$',
-                    'Premium ($$$)': '$$$',
-                    'Luxury ($$$$)': '$$$$'
-                  };
-                  newPrefs.budget = budgetMap[option];
-                }
-                setUserPreferences(newPrefs);
-                addMessage({ text: option }, true);
-                setTimeout(() => {
-                  if (newPrefs.style && newPrefs.occasion && newPrefs.budget) {
-                    showRecommendations();
-                  } else {
-                    // Ask for remaining missing info
-                    const stillMissing = [];
-                    if (!newPrefs.style) stillMissing.push('style preference');
-                    if (!newPrefs.occasion) stillMissing.push('occasion');
-                    if (!newPrefs.budget) stillMissing.push('budget range');
-                    
-                    if (stillMissing.length > 0) {
-                      addAIMessage({
-                        text: `Great! ${stillMissing.length === 1 ? 'What about your ' + stillMissing[0] + '?' : 'Could you also tell me about ' + stillMissing.join(' and ') + '?'}`,
-                        options: stillMissing.includes('style preference') ? ['Casual', 'Formal', 'Smart Casual', 'Streetwear'] : 
-                                 stillMissing.includes('occasion') ? ['Work', 'Date', 'Party', 'Everyday'] :
-                                 stillMissing.includes('budget range') ? ['Budget-friendly ($)', 'Moderate ($$)', 'Premium ($$$)', 'Luxury ($$$$)'] : []
-                      });
-                    }
-                  }
-                }, 500);
-              }
-            });
-            return;
+          if (missing.length > 0) {
+            followUpText += `To give you the best recommendations, could you tell me ${missing.length === 1 ? 'your ' + missing[0] : 'about ' + missing.join(' and ')}?`;
           }
+
+          addAIMessage({
+            text: followUpText,
+            options: missing.includes('style preference') ? ['Casual', 'Formal', 'Smart Casual', 'Streetwear'] : 
+                     missing.includes('occasion') ? ['Work', 'Date', 'Party', 'Everyday'] :
+                     missing.includes('budget range') ? ['Budget-friendly ($)', 'Moderate ($$)', 'Premium ($$$)', 'Luxury ($$$$)'] : [],
+            onOptionClick: (option) => {
+              hapticSelect();
+              const newPrefs = { ...updatedPreferences };
+              if (missing.includes('style preference')) {
+                newPrefs.style = option.toLowerCase();
+              } else if (missing.includes('occasion')) {
+                newPrefs.occasion = option.toLowerCase();
+              } else if (missing.includes('budget range')) {
+                const budgetMap = {
+                  'Budget-friendly ($)': '$',
+                  'Moderate ($$)': '$$',
+                  'Premium ($$$)': '$$$',
+                  'Luxury ($$$$)': '$$$$'
+                };
+                newPrefs.budget = budgetMap[option];
+              }
+              setUserPreferences(newPrefs);
+              addMessage({ text: option }, true);
+              setTimeout(() => {
+                if (newPrefs.style && newPrefs.occasion && newPrefs.budget) {
+                  showRecommendations();
+                } else {
+                  // Ask for remaining missing info
+                  const stillMissing = [];
+                  if (!newPrefs.style) stillMissing.push('style preference');
+                  if (!newPrefs.occasion) stillMissing.push('occasion');
+                  if (!newPrefs.budget) stillMissing.push('budget range');
+                  
+                  if (stillMissing.length > 0) {
+                    addAIMessage({
+                      text: `Great! ${stillMissing.length === 1 ? 'What about your ' + stillMissing[0] + '?' : 'Could you also tell me about ' + stillMissing.join(' and ') + '?'}`,
+                      options: stillMissing.includes('style preference') ? ['Casual', 'Formal', 'Smart Casual', 'Streetwear'] : 
+                               stillMissing.includes('occasion') ? ['Work', 'Date', 'Party', 'Everyday'] :
+                               stillMissing.includes('budget range') ? ['Budget-friendly ($)', 'Moderate ($$)', 'Premium ($$$)', 'Luxury ($$$$)'] : []
+                    });
+                  }
+                }
+              }, 500);
+            }
+          });
+          return;
         }
       }
 
