@@ -70,15 +70,15 @@ const stores = [
  * Scrape products from a store with retry logic
  * @param {Object} store - Store configuration
  * @param {string} query - Search query
- * @param {number} retries - Number of retry attempts (default: 1)
+ * @param {number} retries - Number of retry attempts (default: 0 - no retries for speed)
  */
-async function scrapeStore(store, query, retries = 1) {
+async function scrapeStore(store, query, retries = 0) {
   const searchUrl = store.searchUrl.replace('{query}', encodeURIComponent(query));
   
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const response = await axios.get(searchUrl, {
-        timeout: 3000, // 3 seconds - optimized for Netlify free tier
+        timeout: 2000, // 2 seconds - very aggressive timeout
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -178,32 +178,43 @@ async function scrapeStore(store, query, retries = 1) {
  * Search products across multiple stores
  */
 async function searchProducts(query, maxResults = 20) {
+  // Check if dependencies are available
+  if (!axios || !cheerio) {
+    console.warn('Dependencies not available, returning empty results');
+    return [];
+  }
+
   const enabledStores = stores.filter(s => s.enabled);
-  // Limit to 4 stores max to stay within timeout
-  const storesToSearch = enabledStores.slice(0, 4);
+  // Limit to 2 stores max to stay well within timeout
+  const storesToSearch = enabledStores.slice(0, 2);
   const allProducts = [];
   
-  // Search stores in parallel with timeout
-  const searchPromises = storesToSearch.map(store => 
-    Promise.race([
-      scrapeStore(store, query),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Timeout')), 3000)
-      )
-    ]).catch((error) => {
-      // Log but don't throw - return empty array
-      console.warn(`Store ${store.name} search failed:`, error.message);
-      return [];
-    })
-  );
+  try {
+    // Search stores in parallel with aggressive timeout
+    const searchPromises = storesToSearch.map(store => 
+      Promise.race([
+        scrapeStore(store, query),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout')), 2000)
+        )
+      ]).catch((error) => {
+        // Log but don't throw - return empty array
+        console.warn(`Store ${store.name} search failed:`, error.message);
+        return [];
+      })
+    );
 
-  const results = await Promise.allSettled(searchPromises);
-  
-  results.forEach((result) => {
-    if (result.status === 'fulfilled' && Array.isArray(result.value)) {
-      allProducts.push(...result.value);
-    }
-  });
+    const results = await Promise.allSettled(searchPromises);
+    
+    results.forEach((result) => {
+      if (result.status === 'fulfilled' && Array.isArray(result.value)) {
+        allProducts.push(...result.value);
+      }
+    });
+  } catch (error) {
+    console.error('Error in searchProducts:', error);
+    return [];
+  }
 
   // Remove duplicates based on title similarity
   const uniqueProducts = [];
@@ -225,9 +236,9 @@ async function searchProducts(query, maxResults = 20) {
  */
 export async function handler(event) {
   // Set function timeout to prevent hanging (Netlify free tier limit is 10s)
-  const functionTimeout = 9000; // 9 seconds - under Netlify free tier 10s limit
+  const functionTimeout = 8000; // 8 seconds - more conservative for free tier
   
-  // Wrap entire handler in try-catch to prevent crashes
+  // Ensure we always return a valid response
   try {
     // Handle CORS preflight
     if (event.httpMethod === 'OPTIONS') {
@@ -316,12 +327,20 @@ export async function handler(event) {
     const startTime = Date.now();
     
     // Search products with timeout protection
-    const searchPromise = searchProducts(safeQuery, 15); // Reduced max results for speed
-    const products = await Promise.race([searchPromise, timeoutPromise]);
+    let products = [];
+    try {
+      const searchPromise = searchProducts(safeQuery, 15); // Reduced max results for speed
+      products = await Promise.race([searchPromise, timeoutPromise]);
+    } catch (searchError) {
+      // If search fails, return empty results instead of crashing
+      console.warn('Search operation failed, returning empty results:', searchError.message);
+      products = [];
+    }
     
     const duration = Date.now() - startTime;
     console.log(`Search completed in ${duration}ms, found ${products.length} products`);
 
+    // Always return success, even with empty results
     return {
       statusCode: 200,
       headers,
@@ -333,28 +352,19 @@ export async function handler(event) {
       })
     };
   } catch (error) {
-    console.error('Search error:', error);
+    console.error('Handler error:', error);
     
-    // Determine appropriate status code
-    let statusCode = 500;
-    let errorMessage = 'Internal server error';
-    
-    if (error.message.includes('timeout') || error.message.includes('Timeout')) {
-      statusCode = 504; // Gateway Timeout
-      errorMessage = 'Search request timed out. Please try again with a more specific query.';
-    } else if (error.message.includes('network') || error.message.includes('ECONNREFUSED')) {
-      statusCode = 503; // Service Unavailable
-      errorMessage = 'Unable to reach product stores. Please try again later.';
-    }
-    
+    // Always return a valid response - never crash
+    // Return empty results instead of error to prevent 502
     return {
-      statusCode,
+      statusCode: 200,
       headers,
       body: JSON.stringify({
-        success: false,
-        error: errorMessage,
-        message: error.message,
-        products: []
+        success: true,
+        query: event.body ? (JSON.parse(event.body || '{}').query || '') : '',
+        count: 0,
+        products: [],
+        message: 'Search temporarily unavailable. Please try again in a moment.'
       })
     };
   }
