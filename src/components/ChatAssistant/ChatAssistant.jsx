@@ -3,6 +3,8 @@ import MessageBubble from './MessageBubble';
 import styles from './ChatAssistant.module.css';
 import { brands } from '../../data/brands';
 
+const AI_NAME = 'Aria';
+
 const CONVERSATION_STAGES = {
   WELCOME: 'welcome',
   STYLE_PREFERENCE: 'style_preference',
@@ -24,8 +26,8 @@ function ChatAssistant() {
     // Initial welcome message
     setTimeout(() => {
       addAIMessage({
-        text: "Hi! I'm your AI styling assistant. Let's find your perfect outfit! 👔✨",
-        options: ['Let\'s start!', 'Tell me more'],
+        text: `Hello, I'm ${AI_NAME}, your personal styling assistant. Let's discover your perfect style together.`,
+        options: ['Let\'s start', 'Tell me more'],
         onOptionClick: (option) => {
           if (option === "Let's start!") {
             askStylePreference();
@@ -151,7 +153,7 @@ function ChatAssistant() {
             });
           } else {
             addAIMessage({
-              text: "Awesome! Feel free to come back anytime for style advice. Happy styling! ✨"
+              text: "Perfect! Feel free to return anytime for personalized style guidance."
             });
           }
         }
@@ -212,7 +214,7 @@ function ChatAssistant() {
           ))}
           {isTyping && (
             <div className={styles.typingIndicator}>
-              <div className={styles.avatar}>🤖</div>
+              <div className={styles.avatar}>{AI_NAME.charAt(0)}</div>
               <div className={styles.typingDots}>
                 <span></span>
                 <span></span>
@@ -237,7 +239,9 @@ function ChatAssistant() {
           className={styles.sendButton}
           disabled={!inputValue.trim() || isTyping}
         >
-          <span>➤</span>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </button>
       </form>
     </div>

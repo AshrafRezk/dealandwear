@@ -8,21 +8,21 @@ function MobileNav() {
         to="/" 
         className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
       >
-        <span className={styles.icon}>💬</span>
+        <span className={styles.icon}>Style</span>
         <span className={styles.label}>Style</span>
       </NavLink>
       <NavLink 
         to="/about" 
         className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
       >
-        <span className={styles.icon}>ℹ️</span>
+        <span className={styles.icon}>About</span>
         <span className={styles.label}>About</span>
       </NavLink>
       <NavLink 
         to="/contact" 
         className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
       >
-        <span className={styles.icon}>📧</span>
+        <span className={styles.icon}>Contact</span>
         <span className={styles.label}>Contact</span>
       </NavLink>
     </nav>

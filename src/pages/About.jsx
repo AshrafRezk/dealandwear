@@ -22,15 +22,15 @@ function About() {
           <h2 className={styles.sectionTitle}>How It Works</h2>
           <div className={styles.features}>
             <div className={styles.feature}>
-              <div className={styles.featureIcon}>💬</div>
-              <h3 className={styles.featureTitle}>Chat with AI</h3>
+              <div className={styles.featureIcon}>01</div>
+              <h3 className={styles.featureTitle}>Chat with Aria</h3>
               <p className={styles.featureText}>
                 Have a conversation with our AI styling assistant. Answer a few simple questions 
                 about your style preferences and needs.
               </p>
             </div>
             <div className={styles.feature}>
-              <div className={styles.featureIcon}>🎯</div>
+              <div className={styles.featureIcon}>02</div>
               <h3 className={styles.featureTitle}>Get Recommendations</h3>
               <p className={styles.featureText}>
                 Receive personalized brand and outfit recommendations tailored to your style, 
@@ -38,7 +38,7 @@ function About() {
               </p>
             </div>
             <div className={styles.feature}>
-              <div className={styles.featureIcon}>✨</div>
+              <div className={styles.featureIcon}>03</div>
               <h3 className={styles.featureTitle}>Discover Your Style</h3>
               <p className={styles.featureText}>
                 Explore brands from budget-friendly to luxury, all curated to match your unique 
@@ -51,12 +51,12 @@ function About() {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Why Choose Deal & Wear?</h2>
           <ul className={styles.benefits}>
-            <li>🎨 Personalized style recommendations</li>
-            <li>💰 Budget-conscious options</li>
-            <li>🏪 Wide range of brands</li>
-            <li>🤖 AI-powered insights</li>
-            <li>📱 Works on all devices</li>
-            <li>🆓 Completely free to use</li>
+            <li>Personalized style recommendations</li>
+            <li>Budget-conscious options</li>
+            <li>Wide range of brands</li>
+            <li>AI-powered insights</li>
+            <li>Works on all devices</li>
+            <li>Completely free to use</li>
           </ul>
         </section>
       </div>

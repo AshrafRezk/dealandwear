@@ -64,7 +64,7 @@ function InstallPrompt() {
   return (
     <div className={styles.installPrompt}>
       <div className={styles.content}>
-        <div className={styles.icon}>📱</div>
+        <div className={styles.icon}>App</div>
         <div className={styles.text}>
           <h3>Install Deal and Wear</h3>
           <p>Get the full app experience with offline access</p>

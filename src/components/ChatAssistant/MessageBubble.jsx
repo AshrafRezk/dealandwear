@@ -42,7 +42,7 @@ function MessageBubble({ message, isUser }) {
 
   return (
     <div className={`${styles.messageBubble} ${isUser ? styles.user : styles.ai}`}>
-      {!isUser && <div className={styles.avatar}>🤖</div>}
+      {!isUser && <div className={styles.avatar}>A</div>}
       <div className={styles.content}>
         {renderContent()}
         {message.timestamp && (

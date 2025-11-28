@@ -80,20 +80,20 @@ function Contact() {
               </div>
 
               <button type="submit" className={styles.submitButton}>
-                {submitted ? '✓ Sent!' : 'Send Message'}
+                {submitted ? 'Sent' : 'Send Message'}
               </button>
             </form>
           </div>
 
           <div className={styles.infoSection}>
             <div className={styles.infoCard}>
-              <div className={styles.infoIcon}>📧</div>
+              <div className={styles.infoIcon}>Email</div>
               <h3 className={styles.infoTitle}>Email</h3>
               <p className={styles.infoText}>hello@dealandwear.com</p>
             </div>
 
             <div className={styles.infoCard}>
-              <div className={styles.infoIcon}>🌐</div>
+              <div className={styles.infoIcon}>Social</div>
               <h3 className={styles.infoTitle}>Follow Us</h3>
               <div className={styles.socialLinks}>
                 <a href="https://www.instagram.com/deal.andwear" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
@@ -103,10 +103,10 @@ function Contact() {
             </div>
 
             <div className={styles.infoCard}>
-              <div className={styles.infoIcon}>💬</div>
+              <div className={styles.infoIcon}>Chat</div>
               <h3 className={styles.infoTitle}>Chat Support</h3>
               <p className={styles.infoText}>
-                Use our AI styling assistant on the home page for instant help!
+                Connect with Aria, our AI styling assistant, on the home page.
               </p>
             </div>
           </div>
