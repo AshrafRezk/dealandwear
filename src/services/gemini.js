@@ -27,13 +27,7 @@ ${userPreferences.budget ? `Their budget is ${userPreferences.budget}.` : ''}`;
     // Build conversation history
     const contents = [];
     
-    // Add system context as first message
-    contents.push({
-      parts: [{ text: systemContext }],
-      role: 'user'
-    });
-
-    // Add conversation history
+    // Add conversation history (last 6 messages for context)
     conversationHistory.slice(-6).forEach(msg => {
       contents.push({
         parts: [{ text: msg.text }],
@@ -41,9 +35,10 @@ ${userPreferences.budget ? `Their budget is ${userPreferences.budget}.` : ''}`;
       });
     });
 
-    // Add current user message
+    // Add system context and current user message combined
+    const fullUserMessage = `${systemContext}\n\nUser: ${userMessage}`;
     contents.push({
-      parts: [{ text: userMessage }],
+      parts: [{ text: fullUserMessage }],
       role: 'user'
     });
 
