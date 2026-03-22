@@ -208,7 +208,7 @@ const Brands = () => {
                     </div>
                     <div className={styles.dealInfo}>
                       <h4>{product.name}</h4>
-                      <p style={{ fontWeight: 600, color: 'var(--color-primary)', marginTop: '0.25rem' }}>${product.currentPrice}</p>
+                      <p style={{ fontWeight: 600, color: 'var(--color-primary)', marginTop: '0.25rem' }}>{product.currentPrice} EGP</p>
                     </div>
                   </div>
                 ))}

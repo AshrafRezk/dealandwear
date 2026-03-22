@@ -116,7 +116,7 @@ const DataHub = () => {
             <AttachMoneyIcon className={styles.statIcon} />
             <span>Total Savings</span>
           </div>
-          <div className={styles.statValue}>$2.4K</div>
+          <div className={styles.statValue}>2.4K EGP</div>
           <div className={styles.statTrend}>↑ +42% vs last month</div>
         </div>
       </div>

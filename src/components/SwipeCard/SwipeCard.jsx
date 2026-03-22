@@ -30,7 +30,7 @@ export const SwipeCard = ({ item, onSwipeRight, onSwipeLeft, style, isTop }) => 
         <div className={styles.details}>
           <div className={styles.tags}>{item.Brand__c || item.brand || item.Store__c || item.store || item.tags?.join(' • ') || 'New Arrival'}</div>
           <h2 className={styles.name}>{item.Name || item.name}</h2>
-          <p className={styles.price}>${item.Price__c || item.price || item.Price || 0}</p>
+          <p className={styles.price}>{item.Price__c || item.price || item.Price || 0} EGP</p>
         </div>
       </div>
       
