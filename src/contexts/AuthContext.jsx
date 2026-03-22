@@ -44,21 +44,29 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (credentials) => {
-    const { data } = await axios.post('/api/dw/auth/login', credentials);
-    if (data.ok && data.data.accessToken) {
-      setUserToken(data.data.accessToken);
-      return { success: true };
+    try {
+      const { data } = await axios.post('/api/dw/auth/login', credentials);
+      if (data.ok && data.data.accessToken) {
+        setUserToken(data.data.accessToken);
+        return { success: true };
+      }
+      return { success: false, error: data.error };
+    } catch (err) {
+      return { success: false, error: err.response?.data?.error || { message: err.message } };
     }
-    return { success: false, error: data.error };
   };
 
   const register = async (userData) => {
-    const { data } = await axios.post('/api/dw/auth/register', userData);
-    if (data.ok && data.data.accessToken) {
-      setUserToken(data.data.accessToken);
-      return { success: true };
+    try {
+      const { data } = await axios.post('/api/dw/auth/register', userData);
+      if (data.ok && data.data.accessToken) {
+        setUserToken(data.data.accessToken);
+        return { success: true };
+      }
+      return { success: false, error: data.error };
+    } catch (err) {
+      return { success: false, error: err.response?.data?.error || { message: err.message } };
     }
-    return { success: false, error: data.error };
   };
 
   const logout = () => {

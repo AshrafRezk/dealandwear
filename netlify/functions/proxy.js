@@ -1,5 +1,6 @@
 /* eslint-env node */
 import axios from 'axios';
+import { Buffer } from 'node:buffer';
 import { getSalesforceToken } from './sfAuth.js';
 
 export const handler = async (event) => {
@@ -7,13 +8,12 @@ export const handler = async (event) => {
     const token = await getSalesforceToken();
     const { SF_INSTANCE_URL } = process.env;
     
-    // Determine the actual path
-    // event.path is usually something like "/api/dw/auth/login" or "/.netlify/functions/proxy" depending on Netlify specifics.
-    // If we use rewrites, the original URL path is preserved in `event.path`.
-    const path = event.path.replace('/api/dw/', '').replace('/.netlify/functions/proxy/', '');
+    // Determine the actual path using rawUrl which is 100% reliable
+    const requestUrl = new URL(event.rawUrl);
+    const path = requestUrl.pathname.replace('/api/dw/', '');
     
-    // Only apexrest path
-    const url = `${SF_INSTANCE_URL}/services/apexrest/dw/v1/${path}`;
+    const cleanInstanceUrl = SF_INSTANCE_URL.replace(/\/$/, '');
+    const url = `${cleanInstanceUrl}/services/apexrest/dw/v1/${path}`;
     
     const headers = {
       'Authorization': `Bearer ${token}`,
@@ -57,7 +57,10 @@ export const handler = async (event) => {
     console.error('Proxy Error:', error.message);
     return {
       statusCode: 500,
-      body: JSON.stringify({ ok: false, error: { code: 'SERVER_ERROR', message: error.message } })
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ ok: false, error: { code: 'SERVER_ERROR', message: error.stack || error.message } })
     };
   }
 };

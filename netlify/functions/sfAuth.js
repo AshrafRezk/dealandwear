@@ -20,7 +20,8 @@ export const getSalesforceToken = async () => {
     throw new Error('Missing Salesforce environment variables.');
   }
 
-  const tokenUrl = `${SF_INSTANCE_URL}/services/oauth2/token`;
+  const cleanInstanceUrl = SF_INSTANCE_URL.replace(/\/$/, '');
+  const tokenUrl = `${cleanInstanceUrl}/services/oauth2/token`;
 
   try {
     const params = new URLSearchParams({
@@ -44,7 +45,8 @@ export const getSalesforceToken = async () => {
 
     return cachedToken;
   } catch (error) {
-    console.error('Error fetching Salesforce token:', error.response?.data || error.message);
-    throw new Error('Authentication with Salesforce failed.');
+    const details = error.response?.data ? JSON.stringify(error.response.data) : error.message;
+    console.error('Error fetching Salesforce token:', details);
+    throw new Error(`Authentication with Salesforce failed: ${details}`);
   }
 };
