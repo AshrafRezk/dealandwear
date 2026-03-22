@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 import styles from './DataHub.module.css';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -8,8 +10,49 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ShareIcon from '@mui/icons-material/Share';
 
 const DataHub = () => {
+  const { userProfile, userToken, fetchProfile } = useAuth();
   const [activeTab, setActiveTab] = useState('7 Days');
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [formData, setFormData] = useState({
+    birthdate: '',
+    shopperGender: 'Prefer_Not_to_Say'
+  });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+
   const tabs = ['7 Days', '30 Days', '3 Months', 'Year'];
+
+  const handleEditClick = () => {
+    setFormData({
+      birthdate: userProfile?.birthdate ? userProfile.birthdate.split('T')[0] : '',
+      shopperGender: userProfile?.shopperGender || 'Prefer_Not_to_Say'
+    });
+    setMessage(null);
+    setIsEditingProfile(true);
+  };
+
+  const handleSaveProfile = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage(null);
+
+    try {
+      const { data } = await axios.patch('/api/dw/me', formData, {
+        headers: { 'X-DW-Token': userToken }
+      });
+      if (data.ok) {
+        setMessage({ type: 'success', text: 'Profile updated successfully!' });
+        fetchProfile(userToken);
+        setTimeout(() => setIsEditingProfile(false), 2000);
+      } else {
+        setMessage({ type: 'error', text: data.error?.message || 'Failed to update profile' });
+      }
+    } catch (err) {
+      setMessage({ type: 'error', text: err.response?.data?.error?.message || err.message });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -18,11 +61,13 @@ const DataHub = () => {
           <div className={styles.titleGroup}>
             <div className={styles.iconWrapper}><WhatshotIcon /></div>
             <div>
-              <h1 className={styles.title}>Data Hub</h1>
+              <h1 className={styles.title}>{userProfile ? `Welcome, ${userProfile.firstName || 'User'}` : 'Data Hub'}</h1>
               <p className={styles.subtitle}>Your Style Analytics</p>
             </div>
           </div>
-          <button className={styles.moreBtn}><MoreVertIcon /></button>
+          <button className={styles.moreBtn} onClick={handleEditClick}>
+            Edit Profile
+          </button>
         </div>
         
         <div className={styles.tabsScroller}>
@@ -99,6 +144,55 @@ const DataHub = () => {
           </div>
         </div>
       </div>
+
+      {isEditingProfile && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <h2 className={styles.modalTitle}>Edit Profile</h2>
+            
+            {message && (
+              <div className={`${styles.message} ${styles[message.type]}`}>
+                {message.text}
+              </div>
+            )}
+
+            <form onSubmit={handleSaveProfile}>
+              <div className={styles.formGroup}>
+                <label>Birth Date</label>
+                <input 
+                  type="date"
+                  className={styles.formInput}
+                  value={formData.birthdate}
+                  onChange={(e) => setFormData({...formData, birthdate: e.target.value})}
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Gender</label>
+                <select 
+                  className={styles.formInput}
+                  value={formData.shopperGender}
+                  onChange={(e) => setFormData({...formData, shopperGender: e.target.value})}
+                >
+                  <option value="Prefer_Not_to_Say">Prefer Not to Say</option>
+                  <option value="Women">Women</option>
+                  <option value="Men">Men</option>
+                  <option value="Unisex">Unisex</option>
+                </select>
+              </div>
+
+              <div className={styles.modalActions}>
+                <button type="button" className={styles.cancelBtn} onClick={() => setIsEditingProfile(false)} disabled={loading}>
+                  Cancel
+                </button>
+                <button type="submit" className={styles.saveBtn} disabled={loading}>
+                  {loading ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

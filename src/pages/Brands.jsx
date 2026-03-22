@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styles from './Brands.module.css';
 import MapIcon from '@mui/icons-material/Map';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
@@ -9,11 +10,33 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const Brands = () => {
   const [viewMode, setViewMode] = useState('Map');
+  const [brands, setBrands] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const res = await axios.get('/api/dw/brands');
+        if (res.data.ok) {
+          setBrands(res.data.data.brands);
+        } else {
+          setError(res.data.error?.message || 'Failed to load brands');
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBrands();
+  }, []);
 
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <div className={styles.backBtn}>←</div>
+        <div className={styles.backBtn} onClick={() => window.history.back()}>←</div>
         <div className={styles.headerTitle}>
           <StoreIcon fontSize="small" style={{ color: '#ff4785' }} /> Local Brands
         </div>
@@ -48,63 +71,76 @@ const Brands = () => {
         </button>
       </div>
 
-      <div className={styles.mapCard}>
-        {/* Mock background image of store for 'Studio Minimal' */}
-        <div className={styles.mapImageOverlay}></div>
-        <div className={styles.distanceBadge}><LocationOnIcon fontSize="small"/> 0.3 mi</div>
-        <div className={styles.featuredBadge}>FEATURED</div>
-        
-        <div className={styles.storeContent}>
-          <h2>Studio Minimal</h2>
-          <p>Sustainable Fashion House</p>
-          <div className={styles.tags}>
-            <span>Eco-Friendly</span>
-            <span>Local Made</span>
-            <span>Women-Owned</span>
-          </div>
-          
-          <div className={styles.storeActions}>
-            <button className={styles.followBtn}><AddIcon fontSize="small"/> Follow</button>
-            <button className={styles.visitBtn}><StoreIcon fontSize="small"/> Visit</button>
-          </div>
-        </div>
-      </div>
+      {loading && <div style={{ padding: '2rem', textAlign: 'center' }}>Loading brands...</div>}
+      {error && <div style={{ padding: '2rem', textAlign: 'center', color: 'red' }}>{error}</div>}
 
-      <div className={styles.dealDrops}>
-        <div className={styles.dealHeader}>
-          <div>
-            <h3>Deal Drops</h3>
-            <p>Limited time offers</p>
+      {!loading && !error && brands.map((brand) => (
+        <div key={brand.accountId} style={{ marginBottom: '2.5rem' }}>
+          <div className={styles.mapCard}>
+            <div className={styles.mapImageOverlay}></div>
+            {brand.distanceMiles && (
+              <div className={styles.distanceBadge}><LocationOnIcon fontSize="small"/> {brand.distanceMiles} mi</div>
+            )}
+            {brand.featured && <div className={styles.featuredBadge}>FEATURED</div>}
+            
+            <div className={styles.storeContent}>
+              <h2>{brand.name}</h2>
+              <p>{brand.tagline}</p>
+              <div className={styles.tags}>
+                {brand.tags?.map((tag) => (
+                  <span key={tag}>{tag}</span>
+                ))}
+              </div>
+              
+              <div className={styles.storeActions}>
+                <button className={styles.followBtn}><AddIcon fontSize="small"/> Follow</button>
+                <a 
+                  href={brand.visitUrl || brand.instagramUrl || brand.website || '#'} 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className={styles.visitBtn} 
+                  style={{ textDecoration: 'none' }}
+                >
+                  <StoreIcon fontSize="small"/> Visit
+                </a>
+              </div>
+            </div>
           </div>
-          <div className={styles.timerBadge}>
-            <AccessTimeIcon fontSize="small" /> 2h 14m left
-          </div>
+
+          {brand.products && brand.products.length > 0 && (
+            <div className={styles.dealDrops}>
+              <div className={styles.dealHeader}>
+                <div>
+                  <h3>Deal Drops</h3>
+                  <p>From {brand.name}</p>
+                </div>
+              </div>
+              
+              <div className={styles.dealScroller}>
+                {brand.products.map((product) => (
+                  <div key={product.productId} className={styles.dealCard}>
+                    <div 
+                      className={styles.itemImageDummy} 
+                      style={{ 
+                        background: '#f5f5f5', 
+                        backgroundImage: `url(${product.imageUrl1})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                      }}
+                    >
+                       <div style={{ height: '140px' }}></div>
+                    </div>
+                    <div className={styles.dealInfo}>
+                      <h4>{product.name}</h4>
+                      <p style={{ fontWeight: 600, color: '#ff4785', marginTop: '0.25rem' }}>${product.currentPrice}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-        
-        <div className={styles.dealScroller}>
-          <div className={styles.dealCard}>
-            <div className={styles.discountBadge}>40% OFF</div>
-            <div className={styles.itemImageDummy} style={{ background: '#f5f5f5' }}>
-               {/* Placeholder for item image */}
-               <div style={{ height: '140px' }}></div>
-            </div>
-            <div className={styles.dealInfo}>
-              <h4>Linen Oversized Blazer</h4>
-              <p>Studio Minimal</p>
-            </div>
-          </div>
-          <div className={styles.dealCard}>
-             <div className={styles.itemImageDummy} style={{ background: '#f5f5f5' }}>
-               {/* Placeholder for item image */}
-               <div style={{ height: '140px' }}></div>
-            </div>
-            <div className={styles.dealInfo}>
-              <h4>Organic T-Shirt</h4>
-              <p>Studio Minimal</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      ))}
     </div>
   );
 };

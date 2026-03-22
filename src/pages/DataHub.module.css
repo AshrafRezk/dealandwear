@@ -226,3 +226,108 @@
   color: #aaa;
   padding-top: 10px;
 }
+
+.modalOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.5rem;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 24px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+}
+
+.formGroup {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGroup label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.formInput {
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  outline: none;
+  font-family: inherit;
+}
+
+.formInput:focus {
+  border-color: #bf55ec;
+  box-shadow: 0 0 0 4px rgba(191, 85, 236, 0.1);
+}
+
+.modalActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.cancelBtn, .saveBtn {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+}
+
+.cancelBtn {
+  background: #f4f5f7;
+  color: #666;
+}
+
+.saveBtn {
+  background: #bf55ec;
+  color: white;
+}
+
+.saveBtn:disabled {
+  opacity: 0.7;
+}
+
+.message {
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.message.error {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.message.success {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+

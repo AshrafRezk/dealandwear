@@ -78,7 +78,9 @@ export const SignupForm = ({ onSwitchToLogin }) => {
     lastName: '',
     email: '',
     mobile: '',
-    password: ''
+    password: '',
+    birthdate: '',
+    gender: 'Prefer_Not_to_Say'
   });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -164,6 +166,31 @@ export const SignupForm = ({ onSwitchToLogin }) => {
             placeholder="••••••••"
             required
           />
+        </div>
+
+        <div className={styles.row}>
+          <div className={styles.inputGroup}>
+            <label>Birth Date</label>
+            <input 
+              type="date" 
+              name="birthdate"
+              value={formData.birthdate} 
+              onChange={handleChange} 
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <label>Gender</label>
+            <select 
+              name="gender"
+              value={formData.gender} 
+              onChange={handleChange}
+            >
+              <option value="Prefer_Not_to_Say">Prefer Not to Say</option>
+              <option value="Women">Women</option>
+              <option value="Men">Men</option>
+              <option value="Unisex">Unisex</option>
+            </select>
+          </div>
         </div>
 
         <button type="submit" className={styles.submitBtn} disabled={isLoading}>
