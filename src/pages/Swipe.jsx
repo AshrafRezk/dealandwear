@@ -5,7 +5,7 @@ import { SwipeCard } from '../components/SwipeCard/SwipeCard';
 import styles from './Swipe.module.css';
 
 const Swipe = () => {
-  const { userToken } = useAuth();
+  const { userToken, userProfile } = useAuth();
   const [deck, setDeck] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,7 +21,11 @@ const Swipe = () => {
   const fetchDeck = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('/api/dw/swipe/deck', {
+      let url = '/api/dw/swipe/deck';
+      if (userProfile?.shopperGender && userProfile.shopperGender !== 'Prefer_Not_to_Say') {
+        url += `?genderAudience=${userProfile.shopperGender}`;
+      }
+      const res = await axios.get(url, {
         headers: { 'X-DW-Token': userToken }
       });
       if (res.data.ok) {

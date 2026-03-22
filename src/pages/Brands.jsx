@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 import styles from './Brands.module.css';
 import MapIcon from '@mui/icons-material/Map';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
@@ -9,6 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const Brands = () => {
+  const { userProfile } = useAuth();
   const [viewMode, setViewMode] = useState('Map');
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -64,7 +66,25 @@ const Brands = () => {
       }
       const res = await axios.get(url);
       if (res.data.ok) {
-        setBrands(res.data.data.brands);
+        let fetchedBrands = res.data.data.brands;
+        if (userProfile?.shopperGender && userProfile.shopperGender !== 'Prefer_Not_to_Say') {
+          const gender = userProfile.shopperGender;
+          fetchedBrands = fetchedBrands.map(brand => {
+            if (!brand.products) return brand;
+            const filteredProducts = brand.products.filter(p => {
+              if (p.genderAudience && p.genderAudience !== gender && p.genderAudience !== 'Unisex') return false;
+              const name = (p.name || '').toLowerCase();
+              if (gender === 'Men') {
+                if (name.includes('women') || name.includes('girl') || name.match(/\\b(bra|panties|skirt|dress)\\b/i) || name.includes('بناتي') || name.includes('نسائي') || name.includes('حريمي') || name.includes('برا ')) return false;
+              } else if (gender === 'Women') {
+                if (name.includes(' رجالي') || name.includes('رجالي') || name.includes('ولادي') || name.match(/\\b(men|boys|mens)\\b/i)) return false;
+              }
+              return true;
+            });
+            return { ...brand, products: filteredProducts };
+          });
+        }
+        setBrands(fetchedBrands);
       } else {
         setError(res.data.error?.message || 'Failed to load brands');
       }
