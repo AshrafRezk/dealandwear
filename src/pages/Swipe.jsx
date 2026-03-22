@@ -63,12 +63,12 @@ const Swipe = () => {
   };
 
   const handleSwipeRight = (item) => {
-    recordSwipe(item.id, 'RIGHT');
+    recordSwipe(item.Id || item._id || item.id, 'RIGHT');
     removeCard();
   };
 
   const handleSwipeLeft = (item) => {
-    recordSwipe(item.id, 'LEFT');
+    recordSwipe(item.Id || item._id || item.id, 'LEFT');
     removeCard();
   };
 
@@ -133,7 +133,7 @@ const Swipe = () => {
             
             return (
               <SwipeCard
-                key={item.id}
+                key={item.Id || item._id || item.id || index}
                 item={item}
                 isTop={index === 0}
                 onSwipeRight={handleSwipeRight}

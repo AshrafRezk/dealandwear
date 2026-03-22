@@ -25,12 +25,12 @@ export const SwipeCard = ({ item, onSwipeRight, onSwipeLeft, style, isTop }) => 
       style={cardStyle}
       {...(isTop ? bind : {})}
     >
-      <img src={item.imageUrl} alt={item.name} className={styles.image} draggable={false} />
+      <img src={item.imageUrl || item.Image_URL__c} alt={item.Name || item.name} className={styles.image} draggable={false} />
       <div className={styles.overlay}>
         <div className={styles.details}>
-          <div className={styles.tags}>{item.tags?.join(' • ') || 'New Arrival'}</div>
-          <h2 className={styles.name}>{item.name}</h2>
-          <p className={styles.price}>${item.price}</p>
+          <div className={styles.tags}>{item.Brand__c || item.brand || item.Store__c || item.store || item.tags?.join(' • ') || 'New Arrival'}</div>
+          <h2 className={styles.name}>{item.Name || item.name}</h2>
+          <p className={styles.price}>${item.Price__c || item.price || item.Price || 0}</p>
         </div>
       </div>
       
