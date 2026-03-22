@@ -13,25 +13,67 @@ const Brands = () => {
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [locationName, setLocationName] = useState('Locating...');
+  const [coords, setCoords] = useState(null);
+  const radius = 5;
 
   useEffect(() => {
-    const fetchBrands = async () => {
-      try {
-        const res = await axios.get('/api/dw/brands');
-        if (res.data.ok) {
-          setBrands(res.data.data.brands);
-        } else {
-          setError(res.data.error?.message || 'Failed to load brands');
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    // 1. Get Geolocation
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          setCoords({ lat: latitude, lng: longitude });
 
-    fetchBrands();
+          // 2. Reverse geocode to get city name
+          try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+            const data = await res.json();
+            const city = data.address?.city || data.address?.town || data.address?.village || data.address?.county || 'Unknown Area';
+            const state = data.address?.state || data.address?.country || '';
+            setLocationName(`${city}${state ? `, ${state}` : ''}`);
+          } catch (e) {
+            setLocationName('Current Location');
+          }
+        },
+        (err) => {
+          console.error("Geolocation error", err);
+          setLocationName('Location Access Denied');
+          // Fetch brands without geo if denied
+          fetchBrands();
+        }
+      );
+    } else {
+      setLocationName('Location Not Supported');
+      fetchBrands();
+    }
   }, []);
+
+  useEffect(() => {
+    if (coords) {
+      fetchBrands(coords.lat, coords.lng, radius);
+    }
+  }, [coords]);
+
+  const fetchBrands = async (lat, lng, radiusMiles) => {
+    setLoading(true);
+    try {
+      let url = '/api/dw/brands';
+      if (lat && lng) {
+        url += `?lat=${lat}&lng=${lng}&radiusMiles=${radiusMiles}`;
+      }
+      const res = await axios.get(url);
+      if (res.data.ok) {
+        setBrands(res.data.data.brands);
+      } else {
+        setError(res.data.error?.message || 'Failed to load brands');
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -49,11 +91,11 @@ const Brands = () => {
         <div className={styles.locationInfo}>
           <div className={styles.locIcon}><LocationOnIcon style={{ color: 'var(--color-primary)' }} /></div>
           <div>
-            <h3>Brooklyn, NY</h3>
-            <p>Within 5 miles</p>
+            <h3>{locationName}</h3>
+            <p>Within {radius} miles</p>
           </div>
         </div>
-        <button className={styles.changeBtn}>Change</button>
+        <button className={styles.changeBtn} onClick={() => alert('Location change coming soon!')}>Change</button>
       </div>
 
       <div className={styles.toggleWrapper}>
