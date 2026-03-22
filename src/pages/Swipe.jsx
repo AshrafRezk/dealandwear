@@ -25,7 +25,15 @@ const Swipe = () => {
         headers: { 'X-DW-Token': userToken }
       });
       if (res.data.ok) {
-        setDeck(res.data.data.items || res.data.data); 
+        const payload = res.data.data;
+        let finalDeck = [];
+        if (Array.isArray(payload)) finalDeck = payload;
+        else if (Array.isArray(payload?.items)) finalDeck = payload.items;
+        else if (Array.isArray(payload?.deck)) finalDeck = payload.deck;
+        else if (payload) finalDeck = [payload];
+        
+        console.log('Swipe Deck Loaded:', finalDeck);
+        setDeck(finalDeck);
       } else {
         setError(res.data.error?.message || 'Failed to load deck');
       }
