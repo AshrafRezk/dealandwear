@@ -19,6 +19,13 @@ const Brands = () => {
   const [locationName, setLocationName] = useState('Locating...');
   const [coords, setCoords] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState({
+    minPrice: '',
+    maxPrice: '',
+    gender: '',
+    vertical: ''
+  });
 
 
 
@@ -87,8 +94,8 @@ const Brands = () => {
       if (res && res.data.ok) {
         let fetchedBrands = res.data.data.brands;
 
-        if (userProfile?.shopperGender && userProfile.shopperGender !== 'Prefer_Not_to_Say') {
-          const gender = userProfile.shopperGender;
+        if ((userProfile?.shopperGender && userProfile.shopperGender !== 'Prefer_Not_to_Say') || filters.gender) {
+          const gender = filters.gender || userProfile.shopperGender;
           
           fetchedBrands = fetchedBrands.map(brand => {
             const filteredProducts = filterRelevantProducts(brand.products || [], gender);
@@ -120,7 +127,7 @@ const Brands = () => {
         <div className={styles.headerTitle}>
           <StoreIcon fontSize="small" style={{ color: 'var(--color-primary)' }} /> Local Brands
         </div>
-        <div className={styles.filterBtn}>
+        <div className={styles.filterBtn} onClick={() => setIsFilterOpen(true)}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3M1 14h6m2-6h6m2 8h6"/></svg>
         </div>
       </header>
@@ -167,11 +174,15 @@ const Brands = () => {
 
       {!loading && !error && brands
         .filter(brand => {
-          if (!searchTerm) return true;
+          // 1. Search term filter
           const term = searchTerm.toLowerCase();
-          const brandMatch = brand.name.toLowerCase().includes(term);
-          const productMatch = brand.products?.some(p => p.name.toLowerCase().includes(term));
-          return brandMatch || productMatch;
+          const brandMatch = !searchTerm || brand.name.toLowerCase().includes(term);
+          const productMatch = !searchTerm || brand.products?.some(p => p.name.toLowerCase().includes(term));
+          
+          // 2. Vertical filter
+          const verticalMatch = !filters.vertical || brand.vertical === filters.vertical;
+
+          return (brandMatch || productMatch) && verticalMatch;
         })
         .map((brand) => (
 
@@ -217,7 +228,14 @@ const Brands = () => {
               </div>
               
               <div className={styles.dealScroller}>
-                {brand.products.map((product) => (
+                {brand.products
+                  .filter(product => {
+                    const price = parseFloat(product.currentPrice);
+                    const minMatch = !filters.minPrice || price >= parseFloat(filters.minPrice);
+                    const maxMatch = !filters.maxPrice || price <= parseFloat(filters.maxPrice);
+                    return minMatch && maxMatch;
+                  })
+                  .map((product) => (
                   <div key={product.productId} className={styles.dealCard}>
                     <div 
                       className={styles.itemImageDummy} 
@@ -241,6 +259,89 @@ const Brands = () => {
           )}
         </div>
       ))}
+
+      {/* Filter Drawer */}
+      <div 
+        className={`${styles.drawerOverlay} ${isFilterOpen ? styles.open : ''}`} 
+        onClick={() => setIsFilterOpen(false)}
+      ></div>
+      <div className={`${styles.drawer} ${isFilterOpen ? styles.open : ''}`}>
+        <div className={styles.drawerHeader}>
+          <h2>Filters</h2>
+          <div className={styles.closeBtn} onClick={() => setIsFilterOpen(false)}>×</div>
+        </div>
+
+        <div className={styles.filterGroup}>
+          <label>Price Range (EGP)</label>
+          <div className={styles.priceInputs}>
+            <input 
+              type="number" 
+              placeholder="Min" 
+              className={styles.priceInput}
+              value={filters.minPrice}
+              onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))}
+            />
+            <span>-</span>
+            <input 
+              type="number" 
+              placeholder="Max" 
+              className={styles.priceInput}
+              value={filters.maxPrice}
+              onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
+            />
+          </div>
+        </div>
+
+        <div className={styles.filterGroup}>
+          <label>Gender Override</label>
+          <div className={styles.chipGroup}>
+            {['Men', 'Women', 'Unisex'].map(g => (
+              <div 
+                key={g} 
+                className={`${styles.chip} ${filters.gender === g ? styles.active : ''}`}
+                onClick={() => setFilters(prev => ({ ...prev, gender: prev.gender === g ? '' : g }))}
+              >
+                {g}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.filterGroup}>
+          <label>Category</label>
+          <div className={styles.chipGroup}>
+            {['Retail_Fashion', 'Home_Decor', 'Accessories'].map(v => (
+              <div 
+                key={v} 
+                className={`${styles.chip} ${filters.vertical === v ? styles.active : ''}`}
+                onClick={() => setFilters(prev => ({ ...prev, vertical: prev.vertical === v ? '' : v }))}
+              >
+                {v.replace('_', ' ')}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+          <button 
+            className={styles.applyBtn} 
+            style={{ flex: 1 }}
+            onClick={() => setIsFilterOpen(false)}
+          >
+            Apply Filters
+          </button>
+          <button 
+            className={styles.applyBtn} 
+            style={{ flex: 1, background: '#eee', color: '#333' }}
+            onClick={() => {
+              setFilters({ minPrice: '', maxPrice: '', gender: '', vertical: '' });
+              setIsFilterOpen(false);
+            }}
+          >
+            Reset
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
