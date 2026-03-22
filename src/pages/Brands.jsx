@@ -17,7 +17,8 @@ const Brands = () => {
   const [error, setError] = useState(null);
   const [locationName, setLocationName] = useState('Locating...');
   const [coords, setCoords] = useState(null);
-  const radius = 5;
+// const radius = 5;
+
 
   useEffect(() => {
     // 1. Get Geolocation
@@ -53,28 +54,22 @@ const Brands = () => {
 
   useEffect(() => {
     if (coords) {
-      fetchBrands(coords.lat, coords.lng, radius);
+      fetchBrands(coords.lat, coords.lng);
     }
   }, [coords]);
 
-  const fetchBrands = async (lat, lng, radiusMiles) => {
+
+  const fetchBrands = async (lat, lng) => {
     setLoading(true);
     try {
       let url = '/api/dw/brands';
       if (lat && lng) {
-        url += `?lat=${lat}&lng=${lng}&radiusMiles=${radiusMiles}`;
+        url += `?lat=${lat}&lng=${lng}`;
       }
       const res = await axios.get(url);
       if (res.data.ok) {
         let fetchedBrands = res.data.data.brands;
-        
-        // Fallback: If no local brands found, fetch all brands
-        if (fetchedBrands.length === 0 && lat && lng) {
-          const globalRes = await axios.get('/api/dw/brands');
-          if (globalRes.data.ok) {
-            fetchedBrands = globalRes.data.data.brands;
-          }
-        }
+
         if (userProfile?.shopperGender && userProfile.shopperGender !== 'Prefer_Not_to_Say') {
           const gender = userProfile.shopperGender;
           
@@ -130,11 +125,12 @@ const Brands = () => {
           <div className={styles.locIcon}><LocationOnIcon style={{ color: 'var(--color-primary)' }} /></div>
           <div>
             <h3>{locationName}</h3>
-            <p>Within {radius} miles</p>
+            <p>All Local Brands</p>
           </div>
         </div>
         <button className={styles.changeBtn} onClick={() => alert('Location change coming soon!')}>Change</button>
       </div>
+
 
       <div className={styles.toggleWrapper}>
         <button 
