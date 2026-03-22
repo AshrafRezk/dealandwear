@@ -69,20 +69,30 @@ const Brands = () => {
         let fetchedBrands = res.data.data.brands;
         if (userProfile?.shopperGender && userProfile.shopperGender !== 'Prefer_Not_to_Say') {
           const gender = userProfile.shopperGender;
+          
           fetchedBrands = fetchedBrands.map(brand => {
-            if (!brand.products) return brand;
-            const filteredProducts = brand.products.filter(p => {
-              if (p.genderAudience && p.genderAudience !== gender && p.genderAudience !== 'Unisex') return false;
-              const name = (p.name || '').toLowerCase();
-              if (gender === 'Men') {
-                if (name.includes('women') || name.includes('girl') || name.match(/\\b(bra|panties|skirt|dress)\\b/i) || name.includes('بناتي') || name.includes('نسائي') || name.includes('حريمي') || name.includes('برا ')) return false;
-              } else if (gender === 'Women') {
-                if (name.includes(' رجالي') || name.includes('رجالي') || name.includes('ولادي') || name.match(/\\b(men|boys|mens)\\b/i)) return false;
-              }
-              return true;
+            if (!brand.products || brand.products.length === 0) {
+              const hasMatchingTag = brand.tags?.some(t => 
+                t === gender || t === 'Unisex' || t.toLowerCase() === gender.toLowerCase()
+              );
+              return { ...brand, _relevance: hasMatchingTag ? 1 : 0 };
+            }
+
+            // Sort products: matching gender first
+            const sortedProducts = [...brand.products].sort((a, b) => {
+              const aMatch = a.genderAudience === gender || a.genderAudience === 'Unisex';
+              const bMatch = b.genderAudience === gender || b.genderAudience === 'Unisex';
+              if (aMatch && !bMatch) return -1;
+              if (!aMatch && bMatch) return 1;
+              return 0;
             });
-            return { ...brand, products: filteredProducts };
+
+            const hasMatch = sortedProducts.some(p => p.genderAudience === gender || p.genderAudience === 'Unisex');
+            return { ...brand, products: sortedProducts, _relevance: hasMatch ? 1 : 0 };
           });
+
+          // Sort brands: brands with relevant products first
+          fetchedBrands.sort((a, b) => b._relevance - a._relevance);
         }
         setBrands(fetchedBrands);
       } else {
