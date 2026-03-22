@@ -13,7 +13,12 @@
   included_files = ["netlify/functions/**"]
 
 [[redirects]]
+  from = "/api/dw/*"
+  to = "/.netlify/functions/proxy"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-

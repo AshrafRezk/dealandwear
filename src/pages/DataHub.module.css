@@ -1,0 +1,228 @@
+.container {
+  min-height: 100vh;
+  background: #f4f5f7;
+  padding-bottom: calc(85px + env(safe-area-inset-bottom)); /* Leave space for bottom nav */
+  font-family: 'Outfit', 'Inter', sans-serif;
+}
+
+.headerArea {
+  background: linear-gradient(135deg, #ff7eb3, #bf55ec);
+  padding: 3rem 1.5rem 2rem;
+  border-radius: 0 0 30px 30px;
+  color: white;
+}
+
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.iconWrapper {
+  width: 48px;
+  height: 48px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin-bottom: 0.2rem;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.moreBtn {
+  color: white;
+  padding: 0.5rem;
+  margin: -0.5rem;
+}
+
+.tabsScroller {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: none;
+}
+.tabsScroller::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  padding: 0.5rem 1.25rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.activeTab {
+  background: white;
+  color: #bf55ec;
+}
+
+.statsGrid {
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: -1.5rem;
+}
+
+.statCard {
+  background: white;
+  padding: 1.25rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.cardPink { background: #fce4ec; color: #880e4f; }
+.cardGreen { background: #e8f5e9; color: #1b5e20; }
+.cardBlue { background: #e3f2fd; color: #0d47a1; }
+.cardOrange { background: #fbe9e7; color: #bf360c; }
+
+.statCard.cardPink .statIcon { color: #ec407a; }
+.statCard.cardGreen .statIcon { color: #4caf50; }
+.statCard.cardBlue .statIcon { color: #2196f3; }
+.statCard.cardOrange .statIcon { color: #ff7043; }
+
+.statHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  opacity: 0.8;
+}
+
+.statIcon {
+  font-size: 1.2rem !important;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.03em;
+  color: #1a1a1a;
+}
+
+.cardPink .statTrend { color: #d81b60; }
+.cardGreen .statTrend { color: #2e7d32; }
+.cardBlue .statTrend { color: #1565c0; }
+.cardOrange .statTrend { color: #d84315; }
+
+.statTrend {
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.chartSection {
+  margin: 0 1.5rem 1.5rem;
+  background: white;
+  border-radius: 24px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.chartTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 0.25rem;
+}
+
+.chartSubtitle {
+  font-size: 0.85rem;
+  color: #888;
+  font-weight: 500;
+}
+
+.shareBtn {
+  background: #fce4ec;
+  color: #ec407a;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.chartPlaceholder {
+  position: relative;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gridLines {
+  position: absolute;
+  top: 0; bottom: 30px; left: 0; right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.gridLines span {
+  font-size: 0.7rem;
+  color: #aaa;
+  position: relative;
+  padding-right: 15px;
+  text-align: right;
+  width: 25px;
+}
+
+.gridLines span::after {
+  content: '';
+  position: absolute;
+  left: 30px; right: -100vw;
+  top: 50%;
+  border-top: 1px solid #f0f0f0;
+}
+
+.svgChart {
+  position: absolute;
+  left: 30px; right: 0; top: 0; bottom: 30px;
+  width: calc(100% - 30px);
+  height: calc(100% - 30px);
+}
+
+.xAxis {
+  position: absolute;
+  bottom: 0; left: 30px; right: 0;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: #aaa;
+  padding-top: 10px;
+}

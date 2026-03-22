@@ -1,0 +1,162 @@
+.container {
+  height: 100vh;
+  background: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  z-index: 10;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+}
+
+.iconBtn {
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.iconBtn:active {
+  opacity: 1;
+}
+
+.remixCanvas {
+  flex: 1;
+  position: relative;
+}
+
+.modelPlaceholder {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+}
+
+.modelImg {
+  width: 100%; height: 100%; object-fit: cover;
+  opacity: 0.85;
+}
+
+.overlayInstruction {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+}
+
+.instructionBadge {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 0.75rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.hotspot {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 10;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+.bubble {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 107, 107, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255,255,255,0.4);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  color: white;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hotspot:active .bubble {
+  transform: scale(0.9);
+}
+
+.activeBubble {
+  background: rgba(204, 51, 153, 0.8);
+  border-color: rgba(255,255,255,0.8);
+  width: 70px; height: 70px;
+}
+
+.label {
+  background: white;
+  color: #1a1a1a;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* Hardcoded positions to mimic wireframe layout */
+.blazerPos { top: 25%; left: 30%; }
+.jewelryPos { top: 28%; left: 65%; }
+.topPos { top: 35%; left: 45%; }
+.bagPos { top: 41%; left: 75%; }
+.pantsPos { top: 50%; left: 38%; }
+.shoesPos { top: 75%; left: 43%; }
+
+.actionFooter {
+  position: absolute;
+  bottom: calc(85px + env(safe-area-inset-bottom));
+  left: 0; right: 0;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  z-index: 30;
+  background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+}
+
+.previewBtn, .saveBtn {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+}
+
+.previewBtn {
+  background: #f4f5f7;
+  color: #1a1a1a;
+}
+
+.saveBtn {
+  background: linear-gradient(135deg, #ff7eb3, #bf55ec);
+  color: white;
+}

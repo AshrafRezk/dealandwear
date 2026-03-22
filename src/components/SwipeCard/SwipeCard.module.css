@@ -1,0 +1,89 @@
+.card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  background: #fff;
+  will-change: transform;
+  touch-action: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: 2rem;
+  pointer-events: none;
+}
+
+.details {
+  color: white;
+  width: 100%;
+}
+
+.tags {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  opacity: 0.8;
+  color: #a1c4fd;
+}
+
+.name {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.price {
+  font-size: 1.25rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.stamp {
+  position: absolute;
+  top: 3rem;
+  font-size: 3rem;
+  font-weight: 800;
+  padding: 0.25rem 1rem;
+  border-radius: 8px;
+  border: 4px solid;
+  transform: rotate(-15deg);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.like {
+  right: 2rem;
+  color: #4cd964;
+  border-color: #4cd964;
+  transform: rotate(15deg);
+}
+
+.nope {
+  left: 2rem;
+  color: #ff3b30;
+  border-color: #ff3b30;
+  transform: rotate(-15deg);
+}

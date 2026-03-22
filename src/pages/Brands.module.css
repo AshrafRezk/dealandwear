@@ -1,0 +1,290 @@
+.container {
+  min-height: 100vh;
+  background: #f4f5f7;
+  padding-bottom: calc(85px + env(safe-area-inset-bottom));
+  font-family: 'Outfit', 'Inter', sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.backBtn { cursor: pointer; font-size: 1.5rem; }
+.filterBtn { cursor: pointer; }
+
+.locationBar {
+  margin: 0 1.5rem 1.5rem;
+  background: white;
+  padding: 1rem 1.25rem;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.locationInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.locIcon {
+  width: 40px; height: 40px;
+  background: #fff0f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.locationInfo h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.locationInfo p {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.changeBtn {
+  background: #fff0f5;
+  color: #ff4785;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.toggleWrapper {
+  margin: 0 1.5rem 1.5rem;
+  background: white;
+  border-radius: 12px;
+  display: flex;
+  padding: 0.25rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.toggleBtn {
+  flex: 1;
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  color: #666;
+  background: transparent;
+  transition: all 0.2s;
+}
+
+.activeToggle {
+  background: #1a1a1a;
+  color: white;
+}
+
+.mapCard {
+  margin: 0 1.5rem 2rem;
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  height: 320px;
+  background: linear-gradient(to bottom, #cfd9df 0%, #e2ebf0 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.mapImageOverlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
+  pointer-events: none;
+}
+
+.distanceBadge, .featuredBadge {
+  position: absolute;
+  top: 1rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  z-index: 2;
+}
+
+.distanceBadge {
+  left: 1rem;
+  background: white;
+  color: #1a1a1a;
+}
+
+.featuredBadge {
+  right: 1rem;
+  background: #ff4785;
+  color: white;
+}
+
+.storeContent {
+  position: relative;
+  z-index: 2;
+  padding: 1.5rem;
+  color: white;
+}
+
+.storeContent h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+}
+
+.storeContent p {
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.9;
+  margin-bottom: 1rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.tags span {
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.storeActions {
+  display: flex;
+  gap: 1rem;
+}
+
+.followBtn, .visitBtn {
+  flex: 1;
+  padding: 0.85rem;
+  border-radius: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.followBtn {
+  background: white;
+  color: #1a1a1a;
+}
+
+.visitBtn {
+  background: #ff4785;
+  color: white;
+}
+
+.dealDrops {
+  margin: 0 0 1.5rem 1.5rem;
+}
+
+.dealHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-right: 1.5rem;
+}
+
+.dealHeader h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1a1a1a;
+}
+
+.dealHeader p {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.timerBadge {
+  background: #fff0f5;
+  color: #ff4785;
+  padding: 0.4rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.dealScroller {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  padding-right: 1.5rem;
+}
+
+.dealScroller::-webkit-scrollbar {
+  display: none;
+}
+
+.dealCard {
+  min-width: 160px;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.discountBadge {
+  position: absolute;
+  top: 0.5rem; right: 0.5rem;
+  background: #ff3b30;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  z-index: 2;
+}
+
+.dealInfo {
+  padding: 1rem;
+}
+
+.dealInfo h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.25rem;
+}
+
+.dealInfo p {
+  font-size: 0.8rem;
+  color: #666;
+}

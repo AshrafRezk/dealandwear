@@ -1,0 +1,131 @@
+.authContainer {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 2.5rem 2rem;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 440px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 1.05rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.errorMessage {
+  background: rgba(255, 59, 48, 0.1);
+  color: #ff3b30;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  border: 1px solid rgba(255, 59, 48, 0.2);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.row {
+  display: flex;
+  gap: 1rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.inputGroup label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.inputGroup input {
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.inputGroup input:focus {
+  border-color: #000;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.submitBtn {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 1rem;
+  border-radius: 12px;
+  background: #000;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: #222;
+  transform: translateY(-2px);
+}
+
+.submitBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.switchMode {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.switchMode button {
+  color: #000;
+  font-weight: 600;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: inherit;
+}
+
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
