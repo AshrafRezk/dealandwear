@@ -20,7 +20,7 @@ const Brands = () => {
   const [coords, setCoords] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-const radius = 50; // Use a large radius to show "all" brands while still enabling location ranking
+
 
 
   useEffect(() => {
@@ -67,12 +67,24 @@ const radius = 50; // Use a large radius to show "all" brands while still enabli
     try {
       let url = '/api/dw/brands';
       if (lat && lng) {
-        url += `?lat=${lat}&lng=${lng}&radius=${radius}`;
+        url += `?lat=${lat}&lng=${lng}`;
       }
-      const res = await axios.get(url, {
-        headers: userToken ? { 'X-DW-Token': userToken } : {}
-      });
-      if (res.data.ok) {
+      let res;
+      try {
+        res = await axios.get(url, {
+          headers: userToken ? { 'X-DW-Token': userToken } : {}
+        });
+      } catch (authErr) {
+        console.warn('Authenticated brands fetch failed, falling back to guest fetch', authErr);
+        // Fallback for case where personalization logic crashes (e.g. Apex heap limits)
+        if (userToken) {
+          res = await axios.get(url);
+        } else {
+          throw authErr;
+        }
+      }
+
+      if (res && res.data.ok) {
         let fetchedBrands = res.data.data.brands;
 
         if (userProfile?.shopperGender && userProfile.shopperGender !== 'Prefer_Not_to_Say') {
