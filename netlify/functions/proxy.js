@@ -12,6 +12,14 @@ export const handler = async (event) => {
     const requestUrl = new URL(event.rawUrl);
     const path = requestUrl.pathname.replace('/api/dw/', '');
     
+    if (path === 'debug') {
+       return {
+         statusCode: 200,
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({ ok: true, tokenPrefix: token.substring(0, 10), url: process.env.SF_INSTANCE_URL })
+       };
+    }
+    
     const cleanInstanceUrl = SF_INSTANCE_URL.replace(/\/$/, '');
     const url = `${cleanInstanceUrl}/services/apexrest/dw/v1/${path}`;
     
@@ -56,11 +64,11 @@ export const handler = async (event) => {
   } catch (error) {
     console.error('Proxy Error:', error.message);
     return {
-      statusCode: 500,
+      statusCode: 502,
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ ok: false, error: { code: 'SERVER_ERROR', message: error.stack || error.message } })
+      body: JSON.stringify({ ok: false, error: { code: 'PROXY_SERVER_ERROR', message: error.stack || error.message } })
     };
   }
 };
