@@ -67,6 +67,14 @@ const Brands = () => {
       const res = await axios.get(url);
       if (res.data.ok) {
         let fetchedBrands = res.data.data.brands;
+        
+        // Fallback: If no local brands found, fetch all brands
+        if (fetchedBrands.length === 0 && lat && lng) {
+          const globalRes = await axios.get('/api/dw/brands');
+          if (globalRes.data.ok) {
+            fetchedBrands = globalRes.data.data.brands;
+          }
+        }
         if (userProfile?.shopperGender && userProfile.shopperGender !== 'Prefer_Not_to_Say') {
           const gender = userProfile.shopperGender;
           
