@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
+import { filterRelevantProducts, isBrandRelevant } from '../utils/genderFilter';
 import styles from './Brands.module.css';
 import MapIcon from '@mui/icons-material/Map';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
@@ -17,6 +18,8 @@ const Brands = () => {
   const [error, setError] = useState(null);
   const [locationName, setLocationName] = useState('Locating...');
   const [coords, setCoords] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+
 // const radius = 5;
 
 
@@ -74,29 +77,17 @@ const Brands = () => {
           const gender = userProfile.shopperGender;
           
           fetchedBrands = fetchedBrands.map(brand => {
-            if (!brand.products || brand.products.length === 0) {
-              const hasMatchingTag = brand.tags?.some(t => 
-                t === gender || t === 'Unisex' || t.toLowerCase() === gender.toLowerCase()
-              );
-              return { ...brand, _relevance: hasMatchingTag ? 1 : 0 };
-            }
-
-            // Sort products: matching gender first
-            const sortedProducts = [...brand.products].sort((a, b) => {
-              const aMatch = a.genderAudience === gender || a.genderAudience === 'Unisex';
-              const bMatch = b.genderAudience === gender || b.genderAudience === 'Unisex';
-              if (aMatch && !bMatch) return -1;
-              if (!aMatch && bMatch) return 1;
-              return 0;
-            });
-
-            const hasMatch = sortedProducts.some(p => p.genderAudience === gender || p.genderAudience === 'Unisex');
-            return { ...brand, products: sortedProducts, _relevance: hasMatch ? 1 : 0 };
+            const filteredProducts = filterRelevantProducts(brand.products || [], gender);
+            const hasMatch = filteredProducts.length > 0;
+            const relevantBrand = isBrandRelevant(brand, gender);
+            return { ...brand, products: filteredProducts, _relevance: (hasMatch || relevantBrand) ? 1 : 0 };
           });
 
           // Sort brands: brands with relevant products first
           fetchedBrands.sort((a, b) => b._relevance - a._relevance);
         }
+
+
         setBrands(fetchedBrands);
       } else {
         setError(res.data.error?.message || 'Failed to load brands');
@@ -132,7 +123,7 @@ const Brands = () => {
       </div>
 
 
-      <div className={styles.toggleWrapper}>
+      <div className={styles.toggleWrapper} style={{ marginBottom: '1rem' }}>
         <button 
           className={`${styles.toggleBtn} ${viewMode === 'Map' ? styles.activeToggle : ''}`}
           onClick={() => setViewMode('Map')}
@@ -147,10 +138,29 @@ const Brands = () => {
         </button>
       </div>
 
+      <div className={styles.searchContainer}>
+        <input 
+          type="text" 
+          placeholder="Search products or brands..." 
+          className={styles.searchInput}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
       {loading && <div style={{ padding: '2rem', textAlign: 'center' }}>Loading brands...</div>}
       {error && <div style={{ padding: '2rem', textAlign: 'center', color: 'red' }}>{error}</div>}
 
-      {!loading && !error && brands.map((brand) => (
+      {!loading && !error && brands
+        .filter(brand => {
+          if (!searchTerm) return true;
+          const term = searchTerm.toLowerCase();
+          const brandMatch = brand.name.toLowerCase().includes(term);
+          const productMatch = brand.products?.some(p => p.name.toLowerCase().includes(term));
+          return brandMatch || productMatch;
+        })
+        .map((brand) => (
+
         <div key={brand.accountId} style={{ marginBottom: '2.5rem' }}>
           <div className={styles.mapCard}>
             <div className={styles.mapImageOverlay}></div>

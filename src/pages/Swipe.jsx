@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
+import { filterRelevantProducts } from '../utils/genderFilter';
 import { SwipeCard } from '../components/SwipeCard/SwipeCard';
 import styles from './Swipe.module.css';
 
@@ -37,7 +38,14 @@ const Swipe = () => {
         else if (payload) finalDeck = [payload];
         
         console.log('Swipe Deck Loaded:', finalDeck);
+        
+        // APPLY STRICT FILTERING
+        if (userProfile?.shopperGender && userProfile.shopperGender !== 'Prefer_Not_to_Say') {
+          finalDeck = filterRelevantProducts(finalDeck, userProfile.shopperGender);
+        }
+
         setDeck(finalDeck);
+
       } else {
         setError(res.data.error?.message || 'Failed to load deck');
       }
