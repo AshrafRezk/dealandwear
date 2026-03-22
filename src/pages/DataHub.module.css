@@ -6,7 +6,7 @@
 }
 
 .headerArea {
-  background: linear-gradient(135deg, #ff7eb3, #bf55ec);
+  background: linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end));
   padding: 3rem 1.5rem 2rem;
   border-radius: 0 0 30px 30px;
   color: white;
@@ -79,7 +79,7 @@
 
 .activeTab {
   background: white;
-  color: #bf55ec;
+  color: var(--color-gradient-end);
 }
 
 .statsGrid {
@@ -97,12 +97,12 @@
   box-shadow: 0 4px 15px rgba(0,0,0,0.03);
 }
 
-.cardPink { background: #fce4ec; color: #880e4f; }
+.cardPink { background: var(--color-bg-pink); color: var(--color-text-pink); }
 .cardGreen { background: #e8f5e9; color: #1b5e20; }
 .cardBlue { background: #e3f2fd; color: #0d47a1; }
 .cardOrange { background: #fbe9e7; color: #bf360c; }
 
-.statCard.cardPink .statIcon { color: #ec407a; }
+.statCard.cardPink .statIcon { color: var(--color-icon-pink); }
 .statCard.cardGreen .statIcon { color: #4caf50; }
 .statCard.cardBlue .statIcon { color: #2196f3; }
 .statCard.cardOrange .statIcon { color: #ff7043; }
@@ -129,7 +129,7 @@
   color: #1a1a1a;
 }
 
-.cardPink .statTrend { color: #d81b60; }
+.cardPink .statTrend { color: var(--color-trend-pink); }
 .cardGreen .statTrend { color: #2e7d32; }
 .cardBlue .statTrend { color: #1565c0; }
 .cardOrange .statTrend { color: #d84315; }
@@ -168,8 +168,8 @@
 }
 
 .shareBtn {
-  background: #fce4ec;
-  color: #ec407a;
+  background: var(--color-bg-pink);
+  color: var(--color-icon-pink);
   width: 32px;
   height: 32px;
   display: flex;
@@ -279,8 +279,8 @@
 }
 
 .formInput:focus {
-  border-color: #bf55ec;
-  box-shadow: 0 0 0 4px rgba(191, 85, 236, 0.1);
+  border-color: var(--color-gradient-end);
+  box-shadow: 0 0 0 4px var(--color-primary-alpha);
 }
 
 select.formInput {
@@ -314,7 +314,7 @@ select.formInput {
 }
 
 .saveBtn {
-  background: #bf55ec;
+  background: var(--color-gradient-end);
   color: white;
 }
 

@@ -17,7 +17,7 @@ const Remix = () => {
       <header className={styles.header}>
         <CloseIcon className={styles.iconBtn} />
         <div className={styles.title}>
-          <AutoFixHighIcon fontSize="small" style={{ color: '#ff4785' }} /> Remix Mode
+          <AutoFixHighIcon fontSize="small" style={{ color: 'var(--color-primary)' }} /> Remix Mode
         </div>
         <RefreshIcon className={styles.iconBtn} />
       </header>

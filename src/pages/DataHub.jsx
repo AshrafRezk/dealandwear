@@ -136,8 +136,8 @@ const DataHub = () => {
             <span>100</span><span>80</span><span>60</span><span>40</span><span>20</span><span>0</span>
           </div>
           <svg className={styles.svgChart} viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path d="M0,55 L15,52 L30,48 L45,50 L60,47 L75,51 L100,50" fill="none" stroke="#ff4785" strokeWidth="2" />
-            <path d="M0,55 L15,52 L30,48 L45,50 L60,47 L75,51 L100,50 L100,100 L0,100 Z" fill="rgba(255, 71, 133, 0.1)" />
+            <path d="M0,55 L15,52 L30,48 L45,50 L60,47 L75,51 L100,50" fill="none" stroke="var(--color-primary)" strokeWidth="2" />
+            <path d="M0,55 L15,52 L30,48 L45,50 L60,47 L75,51 L100,50 L100,100 L0,100 Z" fill="var(--color-primary-alpha)" />
           </svg>
           <div className={styles.xAxis}>
             <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>

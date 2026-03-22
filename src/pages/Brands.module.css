@@ -42,7 +42,7 @@
 
 .locIcon {
   width: 40px; height: 40px;
-  background: #fff0f5;
+  background: var(--color-primary-light);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -61,8 +61,8 @@
 }
 
 .changeBtn {
-  background: #fff0f5;
-  color: #ff4785;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 20px;
@@ -138,7 +138,7 @@
 
 .featuredBadge {
   right: 1rem;
-  background: #ff4785;
+  background: var(--color-primary);
   color: white;
 }
 
@@ -201,7 +201,7 @@
 }
 
 .visitBtn {
-  background: #ff4785;
+  background: var(--color-primary);
   color: white;
 }
 
@@ -229,8 +229,8 @@
 }
 
 .timerBadge {
-  background: #fff0f5;
-  color: #ff4785;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
   padding: 0.4rem 0.75rem;
   border-radius: 20px;
   font-size: 0.8rem;

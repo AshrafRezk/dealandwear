@@ -22,6 +22,14 @@ export const AuthProvider = ({ children }) => {
     }
   }, [userToken]);
 
+  useEffect(() => {
+    if (userProfile?.shopperGender === 'Men') {
+      document.body.classList.add('theme-men');
+    } else {
+      document.body.classList.remove('theme-men');
+    }
+  }, [userProfile?.shopperGender]);
+
   const fetchProfile = async (token) => {
     try {
       const { data } = await axios.get('/api/dw/me', {

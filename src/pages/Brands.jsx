@@ -38,7 +38,7 @@ const Brands = () => {
       <header className={styles.header}>
         <div className={styles.backBtn} onClick={() => window.history.back()}>←</div>
         <div className={styles.headerTitle}>
-          <StoreIcon fontSize="small" style={{ color: '#ff4785' }} /> Local Brands
+          <StoreIcon fontSize="small" style={{ color: 'var(--color-primary)' }} /> Local Brands
         </div>
         <div className={styles.filterBtn}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3M1 14h6m2-6h6m2 8h6"/></svg>
@@ -47,7 +47,7 @@ const Brands = () => {
 
       <div className={styles.locationBar}>
         <div className={styles.locationInfo}>
-          <div className={styles.locIcon}><LocationOnIcon style={{ color: '#ff4785' }} /></div>
+          <div className={styles.locIcon}><LocationOnIcon style={{ color: 'var(--color-primary)' }} /></div>
           <div>
             <h3>Brooklyn, NY</h3>
             <p>Within 5 miles</p>
@@ -132,7 +132,7 @@ const Brands = () => {
                     </div>
                     <div className={styles.dealInfo}>
                       <h4>{product.name}</h4>
-                      <p style={{ fontWeight: 600, color: '#ff4785', marginTop: '0.25rem' }}>${product.currentPrice}</p>
+                      <p style={{ fontWeight: 600, color: 'var(--color-primary)', marginTop: '0.25rem' }}>${product.currentPrice}</p>
                     </div>
                   </div>
                 ))}

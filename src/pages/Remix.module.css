@@ -160,3 +160,12 @@
   background: linear-gradient(135deg, #ff7eb3, #bf55ec);
   color: white;
 }
+
+.createBtn {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 1rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end));
+  color: white;
+}

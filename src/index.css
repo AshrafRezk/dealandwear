@@ -7,6 +7,18 @@
 }
 
 :root {
+  /* Gender Theme Variables */
+  --color-primary: #ff4785;
+  --color-primary-light: #fff0f5;
+  --color-primary-alpha: #ff47851a;
+  --color-gradient-start: #ff7eb3;
+  --color-gradient-end: #bf55ec;
+  
+  --color-bg-pink: #fce4ec;
+  --color-text-pink: #880e4f;
+  --color-icon-pink: #ec407a;
+  --color-trend-pink: #d81b60;
+
   /* The Seasons font - works with both Adobe Fonts ('the-seasons') and self-hosted ('The Seasons') */
   font-family: 'the-seasons', 'The Seasons', serif, Georgia, 'Times New Roman', Times, serif;
   line-height: 1.5;
@@ -20,6 +32,19 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body.theme-men {
+  --color-primary: #1a73e8;
+  --color-primary-light: #e8f0fe;
+  --color-primary-alpha: #1a73e81a;
+  --color-gradient-start: #42a5f5;
+  --color-gradient-end: #0d47a1;
+  
+  --color-bg-pink: #e3f2fd;
+  --color-text-pink: #0d47a1;
+  --color-icon-pink: #1976d2;
+  --color-trend-pink: #1565c0;
 }
 
 body {
