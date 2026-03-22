@@ -195,6 +195,15 @@ const Brands = () => {
             {brand.featured && <div className={styles.featuredBadge}>FEATURED</div>}
             
             <div className={styles.storeContent}>
+              {brand.logoUrl ? (
+                <div className={styles.brandLogo}>
+                  <img src={brand.logoUrl} alt={brand.name} className={styles.logoImg} />
+                </div>
+              ) : (
+                <div className={styles.brandLogo}>
+                  <StoreIcon style={{ color: 'var(--color-primary)', fontSize: '2rem' }} />
+                </div>
+              )}
               <h2>{brand.name}</h2>
               <p>{brand.tagline}</p>
               <div className={styles.tags}>
