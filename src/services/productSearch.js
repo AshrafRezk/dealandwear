@@ -30,7 +30,8 @@ export const searchProducts = async (query, options = {}) => {
       timeout = 25000,
       useCache = true,
       useGoogleAPI = true,
-      useMockFallback = true
+      useMockFallback = true,
+      userToken = null
     } = options;
 
     const trimmedQuery = query.trim();
@@ -53,7 +54,8 @@ export const searchProducts = async (query, options = {}) => {
       const response = await fetch(SEARCH_API_URL, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...(userToken ? { 'X-DW-Token': userToken } : {})
         },
         body: JSON.stringify({
           query: trimmedQuery,

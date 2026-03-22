@@ -11,7 +11,7 @@ import AddIcon from '@mui/icons-material/Add';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const Brands = () => {
-  const { userProfile } = useAuth();
+  const { userProfile, userToken } = useAuth();
   const [viewMode, setViewMode] = useState('Map');
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -69,7 +69,9 @@ const Brands = () => {
       if (lat && lng) {
         url += `?lat=${lat}&lng=${lng}`;
       }
-      const res = await axios.get(url);
+      const res = await axios.get(url, {
+        headers: userToken ? { 'X-DW-Token': userToken } : {}
+      });
       if (res.data.ok) {
         let fetchedBrands = res.data.data.brands;
 

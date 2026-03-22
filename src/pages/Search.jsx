@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import { searchProducts } from '../services/productSearch';
 import ProductCard from '../components/ChatAssistant/ProductCard';
 import styles from './Search.module.css';
 import { hapticMessage } from '../utils/haptics';
 
 function Search() {
+  const { userToken } = useAuth();
   const [query, setQuery] = useState('');
   const [products, setProducts] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -24,7 +26,10 @@ function Search() {
     setHasSearched(true);
 
     try {
-      const results = await searchProducts(query.trim(), { maxResults: 20 });
+      const results = await searchProducts(query.trim(), { 
+        maxResults: 20,
+        userToken 
+      });
       setProducts(results);
       
       if (results.length === 0) {

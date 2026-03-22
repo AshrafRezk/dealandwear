@@ -80,7 +80,7 @@ export const SignupForm = ({ onSwitchToLogin }) => {
     mobile: '',
     password: '',
     birthdate: '',
-    gender: ''
+    shopperGender: ''
   });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -181,8 +181,8 @@ export const SignupForm = ({ onSwitchToLogin }) => {
           <div className={styles.inputGroup}>
             <label>Gender *</label>
             <select 
-              name="gender"
-              value={formData.gender} 
+              name="shopperGender"
+              value={formData.shopperGender} 
               onChange={handleChange}
               required
             >
