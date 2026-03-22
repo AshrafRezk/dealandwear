@@ -80,7 +80,7 @@ export const SignupForm = ({ onSwitchToLogin }) => {
     mobile: '',
     password: '',
     birthdate: '',
-    gender: 'Prefer_Not_to_Say'
+    gender: ''
   });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -179,12 +179,14 @@ export const SignupForm = ({ onSwitchToLogin }) => {
             />
           </div>
           <div className={styles.inputGroup}>
-            <label>Gender</label>
+            <label>Gender *</label>
             <select 
               name="gender"
               value={formData.gender} 
               onChange={handleChange}
+              required
             >
+              <option value="" disabled>Select gender</option>
               <option value="Prefer_Not_to_Say">Prefer Not to Say</option>
               <option value="Women">Women</option>
               <option value="Men">Men</option>
