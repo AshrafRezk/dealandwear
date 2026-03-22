@@ -20,7 +20,7 @@ const Brands = () => {
   const [coords, setCoords] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-// const radius = 5;
+const radius = 50; // Use a large radius to show "all" brands while still enabling location ranking
 
 
   useEffect(() => {
@@ -67,7 +67,7 @@ const Brands = () => {
     try {
       let url = '/api/dw/brands';
       if (lat && lng) {
-        url += `?lat=${lat}&lng=${lng}`;
+        url += `?lat=${lat}&lng=${lng}&radius=${radius}`;
       }
       const res = await axios.get(url, {
         headers: userToken ? { 'X-DW-Token': userToken } : {}

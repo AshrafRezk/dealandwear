@@ -44,6 +44,7 @@ export const LoginForm = ({ onSwitchToSignup }) => {
             value={identifier} 
             onChange={e => setIdentifier(e.target.value)} 
             placeholder="john@example.com or +1234567890"
+            autoComplete="username"
             required 
           />
         </div>
@@ -55,6 +56,7 @@ export const LoginForm = ({ onSwitchToSignup }) => {
             value={password} 
             onChange={e => setPassword(e.target.value)} 
             placeholder="••••••••"
+            autoComplete="current-password"
             required 
           />
         </div>
@@ -141,6 +143,7 @@ export const SignupForm = ({ onSwitchToLogin }) => {
             value={formData.email} 
             onChange={handleChange} 
             placeholder="john@example.com"
+            autoComplete="email"
             required
           />
         </div>
@@ -164,6 +167,7 @@ export const SignupForm = ({ onSwitchToLogin }) => {
             value={formData.password} 
             onChange={handleChange} 
             placeholder="••••••••"
+            autoComplete="new-password"
             required
           />
         </div>
