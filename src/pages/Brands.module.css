@@ -124,6 +124,17 @@
   justify-content: space-between;
   align-items: flex-start;
   border-bottom: 1px solid #f8f9fa;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.brandHeader:hover {
+  background: #fafafa;
+}
+
+.brandHeaderActive {
+  background: #f0f7ff;
+  border-bottom: 1px solid #cce5ff;
 }
 
 .brandMainInfo {
@@ -219,13 +230,23 @@
   display: none;
 }
 
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  padding-right: 1.5rem;
+}
+
 .productCard {
-  min-width: 140px;
-  width: 140px;
   background: #fcfcfc;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid #f0f0f0;
+  transition: transform 0.2s;
+}
+
+.productCard:active {
+  transform: scale(0.98);
 }
 
 .productImage {

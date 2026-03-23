@@ -24,8 +24,26 @@ const Brands = () => {
     minPrice: '',
     maxPrice: '',
     gender: '',
-    vertical: ''
+    vertical: '',
+    brandId: ''
   });
+
+  const handleOpenMap = () => {
+    const selectedBrand = brands.find(b => b.accountId === filters.brandId);
+    const query = selectedBrand 
+      ? `${selectedBrand.name} ${locationName}` 
+      : `clothing boutiques ${locationName}`;
+    
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+    window.open(url, '_blank');
+  };
+
+  const toggleBrandFilter = (id) => {
+    setFilters(prev => ({ ...prev, brandId: prev.brandId === id ? '' : id }));
+    // If selecting a brand, ensure we are in List mode and scroll to top
+    setViewMode('List');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
 
 
@@ -145,9 +163,9 @@ const Brands = () => {
       <div className={styles.toggleWrapper}>
         <button 
           className={`${styles.toggleBtn} ${viewMode === 'Map' ? styles.activeToggle : ''}`}
-          onClick={() => setViewMode('Map')}
+          onClick={handleOpenMap}
         >
-          <MapIcon fontSize="small" /> Map <span className={styles.comingSoon}>Coming Soon</span>
+          <MapIcon fontSize="small" /> Map 
         </button>
         <button 
           className={`${styles.toggleBtn} ${viewMode === 'List' ? styles.activeToggle : ''}`}
@@ -183,11 +201,17 @@ const Brands = () => {
           // 2. Vertical filter
           const verticalMatch = !filters.vertical || brand.vertical === filters.vertical;
 
-          return (brandMatch || productMatch) && verticalMatch;
+          // 3. Brand isolation filter
+          const brandMatchIsolator = !filters.brandId || brand.accountId === filters.brandId;
+
+          return (brandMatch || productMatch) && verticalMatch && brandMatchIsolator;
         })
         .map((brand) => (
           <div key={brand.accountId} className={styles.brandSection}>
-            <div className={styles.brandHeader}>
+            <div 
+              className={`${styles.brandHeader} ${filters.brandId === brand.accountId ? styles.brandHeaderActive : ''}`}
+              onClick={() => toggleBrandFilter(brand.accountId)}
+            >
               <div className={styles.brandMainInfo}>
                 {brand.logoUrl ? (
                   <div className={styles.brandLogo}>
@@ -231,7 +255,7 @@ const Brands = () => {
                     View All →
                   </span>
                 </div>
-                <div className={styles.productScroller}>
+                <div className={filters.brandId ? styles.productGrid : styles.productScroller}>
                   {brand.products
                     .filter(product => {
                       const price = parseFloat(product.currentPrice);
@@ -315,6 +339,21 @@ const Brands = () => {
                 onClick={() => setFilters(prev => ({ ...prev, vertical: prev.vertical === v ? '' : v }))}
               >
                 {v.replace('_', ' ')}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.filterGroup}>
+          <label>Select Brand</label>
+          <div className={styles.chipGroup}>
+            {brands.slice(0, 10).map(b => (
+              <div 
+                key={b.accountId} 
+                className={`${styles.chip} ${filters.brandId === b.accountId ? styles.active : ''}`}
+                onClick={() => setFilters(prev => ({ ...prev, brandId: prev.brandId === b.accountId ? '' : b.accountId }))}
+              >
+                {b.name}
               </div>
             ))}
           </div>
