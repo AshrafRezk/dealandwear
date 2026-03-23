@@ -12,7 +12,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const Brands = () => {
   const { userProfile, userToken } = useAuth();
-  const [viewMode, setViewMode] = useState('Map');
+  const [viewMode, setViewMode] = useState('List');
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -142,20 +142,18 @@ const Brands = () => {
         </div>
         <button className={styles.changeBtn} onClick={() => alert('Location change coming soon!')}>Change</button>
       </div>
-
-
-      <div className={styles.toggleWrapper} style={{ marginBottom: '1rem' }}>
+      <div className={styles.toggleWrapper}>
         <button 
           className={`${styles.toggleBtn} ${viewMode === 'Map' ? styles.activeToggle : ''}`}
           onClick={() => setViewMode('Map')}
         >
-          <MapIcon fontSize="small" /> Map
+          <MapIcon fontSize="small" /> Map <span className={styles.comingSoon}>Coming Soon</span>
         </button>
         <button 
           className={`${styles.toggleBtn} ${viewMode === 'List' ? styles.activeToggle : ''}`}
           onClick={() => setViewMode('List')}
         >
-          <FormatListBulletedIcon fontSize="small" /> List
+          <FormatListBulletedIcon fontSize="small" /> List 
         </button>
       </div>
 
@@ -169,8 +167,11 @@ const Brands = () => {
         />
       </div>
 
-      {loading && <div style={{ padding: '2rem', textAlign: 'center' }}>Loading brands...</div>}
-      {error && <div style={{ padding: '2rem', textAlign: 'center', color: 'red' }}>{error}</div>}
+      {loading && (
+        <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>
+          Searching for local gems...
+        </div>
+      )}
 
       {!loading && !error && brands
         .filter(brand => {
@@ -185,89 +186,77 @@ const Brands = () => {
           return (brandMatch || productMatch) && verticalMatch;
         })
         .map((brand) => (
-
-        <div key={brand.accountId} style={{ marginBottom: '2.5rem' }}>
-          <div className={styles.mapCard}>
-            <div className={styles.mapImageOverlay}></div>
-            {brand.distanceMiles && (
-              <div className={styles.distanceBadge}><LocationOnIcon fontSize="small"/> {brand.distanceMiles} mi</div>
-            )}
-            {brand.featured && <div className={styles.featuredBadge}>FEATURED</div>}
-            
-            <div className={styles.storeContent}>
-              {brand.logoUrl ? (
-                <div className={styles.brandLogo}>
-                  <img src={brand.logoUrl} alt={brand.name} className={styles.logoImg} />
-                </div>
-              ) : (
-                <div className={styles.brandLogo}>
-                  <StoreIcon style={{ color: 'var(--color-primary)', fontSize: '2rem' }} />
-                </div>
-              )}
-              <h2>{brand.name}</h2>
-              <p>{brand.tagline}</p>
-              <div className={styles.tags}>
-                {brand.tags?.map((tag) => (
-                  <span key={tag}>{tag}</span>
-                ))}
-              </div>
-              
-              <div className={styles.storeActions}>
-                <button className={styles.followBtn}><AddIcon fontSize="small"/> Follow</button>
-                <a 
-                  href={brand.visitUrl || brand.instagramUrl || brand.website || '#'} 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  className={styles.visitBtn} 
-                  style={{ textDecoration: 'none' }}
-                >
-                  <StoreIcon fontSize="small"/> Visit
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {brand.products && brand.products.length > 0 && (
-            <div className={styles.dealDrops}>
-              <div className={styles.dealHeader}>
-                <div>
-                  <h3>Deal Drops</h3>
-                  <p>From {brand.name}</p>
-                </div>
-              </div>
-              
-              <div className={styles.dealScroller}>
-                {brand.products
-                  .filter(product => {
-                    const price = parseFloat(product.currentPrice);
-                    const minMatch = !filters.minPrice || price >= parseFloat(filters.minPrice);
-                    const maxMatch = !filters.maxPrice || price <= parseFloat(filters.maxPrice);
-                    return minMatch && maxMatch;
-                  })
-                  .map((product) => (
-                  <div key={product.productId} className={styles.dealCard}>
-                    <div 
-                      className={styles.itemImageDummy} 
-                      style={{ 
-                        background: '#f5f5f5', 
-                        backgroundImage: `url(${product.imageUrl1})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                      }}
-                    >
-                       <div style={{ height: '140px' }}></div>
-                    </div>
-                    <div className={styles.dealInfo}>
-                      <h4>{product.name}</h4>
-                      <p style={{ fontWeight: 600, color: 'var(--color-primary)', marginTop: '0.25rem' }}>{product.currentPrice} EGP</p>
-                    </div>
+          <div key={brand.accountId} className={styles.brandSection}>
+            <div className={styles.brandHeader}>
+              <div className={styles.brandMainInfo}>
+                {brand.logoUrl ? (
+                  <div className={styles.brandLogo}>
+                    <img src={brand.logoUrl} alt={brand.name} className={styles.logoImg} />
                   </div>
-                ))}
+                ) : (
+                  <div className={styles.brandLogo}>
+                    <StoreIcon style={{ color: 'var(--color-primary)', fontSize: '2rem' }} />
+                  </div>
+                )}
+                <div className={styles.brandMeta}>
+                  <h2>{brand.name}</h2>
+                  <p>{brand.tagline || 'Local Boutique'}</p>
+                  <div className={styles.brandBadges}>
+                    {brand.vertical && (
+                      <span className={`${styles.badge} ${styles.verticalBadge}`}>
+                        {brand.vertical.replace('_', ' ')}
+                      </span>
+                    )}
+                    {brand.distanceMiles && (
+                      <span className={`${styles.badge} ${styles.distanceBadgeSmall}`}>
+                        {parseFloat(brand.distanceMiles).toFixed(1)} miles away
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
+              <button 
+                className={styles.visitBtnSmall}
+                onClick={() => brand.visitUrl && window.open(brand.visitUrl, '_blank')}
+              >
+                Visit
+              </button>
             </div>
-          )}
-        </div>
-      ))}
+
+            {brand.products && brand.products.length > 0 && (
+              <div className={styles.productSection}>
+                <div className={styles.sectionTitle}>
+                  <span>Popular Items</span>
+                  <span className={styles.viewAllLink} onClick={() => brand.visitUrl && window.open(brand.visitUrl, '_blank')}>
+                    View All →
+                  </span>
+                </div>
+                <div className={styles.productScroller}>
+                  {brand.products
+                    .filter(product => {
+                      const price = parseFloat(product.currentPrice);
+                      const minMatch = !filters.minPrice || price >= parseFloat(filters.minPrice);
+                      const maxMatch = !filters.maxPrice || price <= parseFloat(filters.maxPrice);
+                      return minMatch && maxMatch;
+                    })
+                    .map((product) => (
+                      <div key={product.productId} className={styles.productCard}>
+                        <img 
+                          src={product.imageUrl1 || '/placeholder-product.png'} 
+                          alt={product.name} 
+                          className={styles.productImage}
+                        />
+                        <div className={styles.productInfo}>
+                          <h4 className={styles.productName}>{product.name}</h4>
+                          <span className={styles.productPrice}>{product.currentPrice} EGP</span>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
 
       {/* Filter Drawer */}
       <div 
