@@ -25,17 +25,17 @@ const Brands = () => {
     maxPrice: '',
     gender: '',
     vertical: '',
-    brandId: ''
+    brandId: '',
+    showProducts: false
   });
 
-  const handleOpenMap = () => {
+  const getMapUrl = () => {
     const selectedBrand = brands.find(b => b.accountId === filters.brandId);
     const query = selectedBrand 
       ? `${selectedBrand.name} ${locationName}` 
       : `clothing boutiques ${locationName}`;
     
-    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
-    window.open(url, '_blank');
+    return `https://maps.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
   };
 
   const toggleBrandFilter = (id) => {
@@ -163,7 +163,7 @@ const Brands = () => {
       <div className={styles.toggleWrapper}>
         <button 
           className={`${styles.toggleBtn} ${viewMode === 'Map' ? styles.activeToggle : ''}`}
-          onClick={handleOpenMap}
+          onClick={() => setViewMode('Map')}
         >
           <MapIcon fontSize="small" /> Map 
         </button>
@@ -191,7 +191,49 @@ const Brands = () => {
         </div>
       )}
 
-      {!loading && !error && brands
+      {!loading && !error && viewMode === 'Map' && (
+        <div className={styles.mapContainer}>
+          <iframe 
+            className={styles.mapIframe}
+            title="Local Map"
+            src={getMapUrl()}
+            allowFullScreen
+          ></iframe>
+        </div>
+      )}
+
+      {!loading && !error && viewMode === 'List' && filters.showProducts && (
+        <div className={styles.productSection} style={{ padding: '1.5rem' }}>
+          <div className={styles.productGrid}>
+            {brands
+              .flatMap(brand => (brand.products || []).map(p => ({ ...p, brandName: brand.name })))
+              .filter(product => {
+                const term = searchTerm.toLowerCase();
+                const nameMatch = !searchTerm || product.name.toLowerCase().includes(term);
+                const brandMatch = !searchTerm || product.brandName.toLowerCase().includes(term);
+                
+                const price = parseFloat(product.currentPrice);
+                const minPriceMatch = !filters.minPrice || price >= parseFloat(filters.minPrice);
+                const maxPriceMatch = !filters.maxPrice || price <= parseFloat(filters.maxPrice);
+                
+                return (nameMatch || brandMatch) && minPriceMatch && maxPriceMatch;
+              })
+              .map(product => (
+                <div key={product.productId} className={styles.productCard}>
+                  <img src={product.imageUrl1 || '/placeholder-product.png'} alt={product.name} className={styles.productImage} />
+                  <div className={styles.productInfo}>
+                    <h4 className={styles.productName}>{product.name}</h4>
+                    <p style={{ fontSize: '0.7rem', color: '#888', margin: '2px 0' }}>{product.brandName}</p>
+                    <span className={styles.productPrice}>{product.currentPrice} EGP</span>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      )}
+
+      {!loading && !error && viewMode === 'List' && !filters.showProducts && brands
         .filter(brand => {
           // 1. Search term filter
           const term = searchTerm.toLowerCase();
@@ -291,6 +333,18 @@ const Brands = () => {
         <div className={styles.drawerHeader}>
           <h2>Filters</h2>
           <div className={styles.closeBtn} onClick={() => setIsFilterOpen(false)}>×</div>
+        </div>
+
+        <div className={styles.toggleGroup}>
+          <label style={{ fontWeight: 800 }}>Show Products directly</label>
+          <label className={styles.toggleSwitch}>
+            <input 
+              type="checkbox" 
+              checked={filters.showProducts}
+              onChange={(e) => setFilters(prev => ({ ...prev, showProducts: e.target.checked }))}
+            />
+            <span className={styles.slider}></span>
+          </label>
         </div>
 
         <div className={styles.filterGroup}>
