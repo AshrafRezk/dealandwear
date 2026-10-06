@@ -1,0 +1,219 @@
+.app {
+  min-block-size: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  padding-block-end: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+}
+.main:focus {
+  outline: none;
+}
+.mainFocused {
+  padding-block-end: 0;
+}
+@media (min-width: 900px) {
+  .main {
+    padding-block-end: 0;
+  }
+}
+
+/* ---------- header ---------- */
+.header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-4);
+  block-size: var(--header-h);
+  padding-inline: var(--space-4);
+  background: rgba(248, 245, 239, 0.94);
+  backdrop-filter: saturate(140%) blur(10px);
+  border-block-end: 1px solid var(--line);
+}
+@media (min-width: 900px) {
+  .header {
+    padding-inline: var(--space-6);
+  }
+}
+.headerFocused {
+  grid-template-columns: 1fr auto;
+}
+.logoLink {
+  grid-column: 2;
+  justify-self: center;
+  text-decoration: none;
+}
+.headerFocused .logoLink {
+  grid-column: 1;
+  justify-self: start;
+}
+.skipQuiz {
+  justify-self: end;
+  font-size: 13px;
+  color: var(--stone);
+}
+
+.primaryNav {
+  display: none;
+  gap: var(--space-5);
+}
+.navLink,
+.toolLink {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+  padding-block: var(--space-2);
+  border-block-end: 1px solid transparent;
+}
+.navLink:hover,
+.toolLink:hover {
+  border-block-end-color: var(--ink);
+}
+.toolLink:global(.active) {
+  border-block-end-color: var(--emerald);
+}
+
+.headerTools {
+  grid-column: 3;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+.toolLink {
+  display: none;
+}
+.headerSearch {
+  display: none;
+  align-items: center;
+  border-block-end: 1px solid var(--line);
+}
+.headerSearch input {
+  inline-size: 160px;
+  border: 0;
+  background: transparent;
+  padding: 6px 4px;
+  font-size: 13px;
+}
+.headerSearch input:focus {
+  outline: none;
+}
+.headerSearch button {
+  border: 0;
+  background: none;
+  padding: 4px;
+  color: var(--ink);
+}
+.mobileSearch {
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  color: var(--ink);
+}
+
+@media (min-width: 900px) {
+  .primaryNav,
+  .headerSearch {
+    display: flex;
+  }
+  .toolLink {
+    display: inline-block;
+  }
+  .mobileSearch {
+    display: none;
+  }
+}
+
+/* ---------- tab bar ---------- */
+.tabbar {
+  position: fixed;
+  z-index: 40;
+  inset-inline: 0;
+  inset-block-end: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  block-size: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+  padding-block-end: env(safe-area-inset-bottom);
+  background: var(--ivory);
+  border-block-start: 1px solid var(--line);
+}
+.tab {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 4px;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--stone);
+  text-decoration: none;
+}
+.tabActive {
+  color: var(--ink);
+  font-weight: 600;
+}
+.tabActive svg {
+  color: var(--emerald);
+}
+@media (min-width: 900px) {
+  .tabbar {
+    display: none;
+  }
+}
+
+/* ---------- footer ---------- */
+.footer {
+  margin-block-start: var(--space-8);
+  border-block-start: 1px solid var(--line);
+  padding-block: var(--space-6);
+  padding-block-end: calc(var(--space-6) + var(--tabbar-h));
+}
+@media (min-width: 900px) {
+  .footer {
+    padding-block-end: var(--space-6);
+  }
+}
+.footerInner {
+  display: grid;
+  gap: var(--space-5);
+}
+@media (min-width: 900px) {
+  .footerInner {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+  }
+}
+.footerBrand {
+  display: grid;
+  gap: var(--space-2);
+  font-size: 13px;
+}
+.footerLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-5);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.footerLinks a {
+  text-decoration: none;
+  color: var(--stone);
+}
+.footerLinks a:hover {
+  color: var(--ink);
+}
+.copyright {
+  font-size: 11px;
+  color: var(--stone);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}

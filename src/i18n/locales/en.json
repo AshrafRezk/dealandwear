@@ -1,0 +1,625 @@
+{
+  "brand": {
+    "name": "Find Your Fit",
+    "defaultTitle": "Find Your Fit: your Style DNA, Egypt's best brands"
+  },
+  "common": {
+    "close": "Close",
+    "dismiss": "Dismiss",
+    "loading": "Loading…",
+    "retry": "Try again",
+    "loadMore": "Show more",
+    "seeAll": "See all",
+    "cancel": "Cancel",
+    "notSet": "Prefer not to say"
+  },
+  "nav": {
+    "skip": "Skip to content",
+    "primary": "Shop",
+    "tabs": "Main",
+    "home": "Home",
+    "search": "Search",
+    "quiz": "Quiz",
+    "saved": "Saved",
+    "profile": "Profile",
+    "newIn": "New in",
+    "women": "Women",
+    "men": "Men",
+    "brands": "Brands"
+  },
+  "footer": {
+    "tagline": "Curated fashion. Perfectly matched.",
+    "label": "Company",
+    "about": "About",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "copyright": "© {{year}} Find Your Fit",
+    "getApp": "Get the app"
+  },
+  "consent": {
+    "label": "Cookie and analytics choice",
+    "body": "We use essential storage to keep you signed in and remember your quiz. With your permission we also count anonymous usage (no names, no tracking across sites) to make the app better.",
+    "learnMore": "Privacy policy",
+    "essentialOnly": "Essential only",
+    "accept": "Allow analytics"
+  },
+  "install": {
+    "label": "Install the app",
+    "body": "Get the Find Your Fit app on your home screen. It opens full screen and loads faster.",
+    "cta": "Get the app",
+    "iosLead": "Get the app: tap",
+    "iosTail": "then “Add to Home Screen”.",
+    "settingsTitle": "The app",
+    "settingsBody": "Install Find Your Fit for full-screen browsing and quicker loading.",
+    "installed": "You're using the installed app.",
+    "iosSteps": "On iPhone: open this site in Safari, tap Share, then “Add to Home Screen”.",
+    "unavailable": "Open this site in Chrome, Edge or Safari to install it."
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "boundaryTitle": "This page hit a snag",
+    "boundaryBody": "We've been notified. Reload the page or head back home.",
+    "reload": "Reload",
+    "goHome": "Go home",
+    "loadTitle": "We couldn't load this",
+    "loadBody": "Check your connection and try again."
+  },
+  "home": {
+    "eyebrow": "Curated fashion. Perfectly matched.",
+    "titleLead": "Find your",
+    "titleAccent": "fit.",
+    "body": "Swipe through a few looks, discover your Style DNA, then shop Egypt's best local makers and global houses matched to how you actually like to dress.",
+    "bodyPersonalised": "Your edit is tuned to your Style DNA. Every piece shows how well it matches you.",
+    "ctaQuiz": "Take the 2-minute quiz",
+    "ctaBrowse": "Browse the edit",
+    "ctaDna": "See your Style DNA",
+    "ctaRefine": "Refine your taste",
+    "howLabel": "How it works",
+    "step": {
+      "one": "Swipe on looks you love (or don't).",
+      "two": "Get your Style DNA and a Fit Match % on every piece.",
+      "three": "Shop directly with the brand. No middleman."
+    },
+    "categoriesLabel": "Shop by category",
+    "onSale": "On sale",
+    "feedEyebrow": "The edit",
+    "feedTitle": "Fresh from our brands",
+    "feedEyebrowPersonal": "Matched to you",
+    "feedTitlePersonal": "Picked for your style",
+    "makersEyebrow": "Local makers",
+    "makersTitle": "Made in Egypt, worth discovering",
+    "makersBody": "Independent labels with real craft, alongside the global houses you already know.",
+    "makersCta": "Shop local makers",
+    "allBrands": "All brands"
+  },
+  "category": {
+    "Tops": "Tops",
+    "Shirts": "Shirts",
+    "Knitwear": "Knitwear",
+    "Dresses": "Dresses",
+    "Skirts": "Skirts",
+    "Trousers": "Trousers",
+    "Jeans": "Jeans",
+    "Shorts": "Shorts",
+    "Outerwear": "Outerwear",
+    "Suits": "Suits",
+    "Activewear": "Activewear",
+    "Modest_Wear": "Modest wear",
+    "Loungewear": "Loungewear",
+    "Intimates": "Intimates",
+    "Swimwear": "Swimwear",
+    "Shoes": "Shoes",
+    "Bags": "Bags",
+    "Accessories": "Accessories",
+    "Other": "Other"
+  },
+  "fit": {
+    "Relaxed": "Relaxed",
+    "Tailored": "Tailored",
+    "Oversized": "Oversized",
+    "Fitted": "Fitted",
+    "True_to_size": "True to size",
+    "Cropped": "Cropped"
+  },
+  "origin": {
+    "Local_Maker": "Local makers",
+    "Global_House": "Global houses"
+  },
+  "sort": {
+    "relevance": "Best match",
+    "price_asc": "Price: low to high",
+    "price_desc": "Price: high to low",
+    "newest": "Newest",
+    "discount": "Biggest discount"
+  },
+  "price": {
+    "0-750": "Under EGP 750",
+    "750-1500": "EGP 750 – 1,500",
+    "1500-3000": "EGP 1,500 – 3,000",
+    "3000+": "EGP 3,000+"
+  },
+  "gender": {
+    "Women": "Women",
+    "Men": "Men",
+    "Unisex": "Everything",
+    "Prefer_Not_to_Say": "Prefer not to say"
+  },
+  "region": {
+    "EG": "Egypt",
+    "SA": "Saudi Arabia",
+    "AE": "United Arab Emirates",
+    "Other": "Somewhere else"
+  },
+  "product": {
+    "fitMatch": "{{value}}% Fit Match",
+    "matchShort": "{{value}}%",
+    "wasPrice": "Was {{price}}",
+    "breadcrumb": "Breadcrumb",
+    "gallery": "Product images",
+    "imageN": "Image {{n}} of {{total}}",
+    "fitMatchLabel": "Fit Match",
+    "howCalculated": "Based on your Style DNA",
+    "fitUnknownTitle": "How well does this fit your style?",
+    "fitUnknownBody": "Take the quiz and every piece shows a Fit Match %.",
+    "sizesListed": "Sizes listed by the brand",
+    "sizesNote": "Check availability and the size guide on the brand's site.",
+    "shopAt": "Shop at {{brand}}",
+    "theStore": "the store",
+    "noListing": "This piece isn't available to buy online right now.",
+    "unavailable": "This piece is no longer available from the brand. Here are some similar ones.",
+    "save": "Save",
+    "saved": "Saved",
+    "share": "Share",
+    "shareText": "{{name}} by {{brand}}, found on Find Your Fit",
+    "linkCopied": "Link copied",
+    "disclosure": "You'll check out on {{brand}}'s own site. Prices, delivery and returns are set by the brand.",
+    "description": "Description",
+    "details": "Details",
+    "detail": {
+      "category": "Category",
+      "fit": "Fit",
+      "color": "Colour",
+      "material": "Material",
+      "type": "Type"
+    },
+    "deliveryTitle": "Delivery and returns",
+    "deliveryBody": "Orders are fulfilled by {{brand}}. You'll see delivery times, costs and the return policy at checkout on their site.",
+    "similar": "You might also like",
+    "storeUnavailable": "We couldn't open the store. Please try again.",
+    "notFoundTitle": "This piece is no longer listed",
+    "notFoundBody": "It may have sold out or been removed by the brand.",
+    "keepBrowsing": "Keep browsing"
+  },
+  "saved": {
+    "title": "Saved",
+    "eyebrow": "Your wishlist",
+    "count_one": "{{count}} piece",
+    "count_other": "{{count}} pieces",
+    "signInToSave": "Sign in to save pieces to your wishlist.",
+    "added": "Saved to your wishlist",
+    "removed": "Removed from your wishlist",
+    "addLabel": "Save {{name}}",
+    "removeLabel": "Remove {{name}} from saved",
+    "guestTitle": "Keep the pieces you love",
+    "guestBody": "Sign in to save pieces and find them on any device.",
+    "emptyTitle": "Nothing saved yet",
+    "emptyBody": "Tap the heart on any piece to keep it here.",
+    "discover": "Discover pieces"
+  },
+  "search": {
+    "title": "Search",
+    "titleFor": "“{{q}}”",
+    "label": "Search pieces and brands",
+    "placeholder": "Try “linen shirt under 800” or “black midi dress”",
+    "placeholderShort": "Search",
+    "submit": "Search",
+    "clear": "Clear search",
+    "filters": "Filters",
+    "filtersCount": "Filters ({{count}})",
+    "onSale": "On sale",
+    "sortLabel": "Sort by",
+    "resultsFor_one": "{{count}} piece for “{{q}}”",
+    "resultsFor_other": "{{count}} pieces for “{{q}}”",
+    "resultsAll_one": "{{count}} piece",
+    "resultsAll_other": "{{count}} pieces",
+    "rankedForYou": "ranked for your style",
+    "relaxed": "No exact matches, so we widened the search a little.",
+    "alsoMatching": "Also matching: {{terms}}",
+    "zeroTitle": "Nothing for “{{q}}” yet",
+    "zeroFiltersTitle": "No pieces match these filters",
+    "zeroBody": "Try fewer words, a different spelling, or one of these:",
+    "clearFilters": "Clear filters",
+    "tryQuiz": "Or let the quiz find your style",
+    "showResults_one": "Show {{count}} piece",
+    "showResults_other": "Show {{count}} pieces",
+    "group": {
+      "category": "Category",
+      "fit": "Fit",
+      "price": "Price",
+      "shopFor": "Shop for",
+      "origin": "Brand type"
+    }
+  },
+  "quiz": {
+    "title": "Style quiz",
+    "eyebrow": "Style quiz · 2 minutes",
+    "introTitle": "Let's find your fit.",
+    "introBody": "We'll show you looks from real brands. Tell us what you'd wear and what you wouldn't. There are no wrong answers.",
+    "audienceLegend": "Show me",
+    "audience": {
+      "women": "Womenswear",
+      "men": "Menswear",
+      "all": "A bit of everything"
+    },
+    "howLike": "Swipe right or tap the thumb up if you'd wear it",
+    "howDislike": "Swipe left if it's not you",
+    "howSkip": "Skip if you're unsure",
+    "skipForNow": "Skip for now",
+    "loadingDeck": "Picking looks for you…",
+    "styledLabel": "How well we know your style",
+    "styledPercent": "{{value}}% styled",
+    "dnaReady": "your Style DNA is ready",
+    "toGo_one": "{{count}} more to unlock your Style DNA",
+    "toGo_other": "{{count}} more to unlock your Style DNA",
+    "controlsLabel": "Your verdict",
+    "like": "I'd wear this",
+    "dislike": "Not for me",
+    "skip": "Skip",
+    "undo": "Undo last",
+    "stamp": {
+      "like": "Yes",
+      "dislike": "Nope"
+    },
+    "keyboardHint": "Use ← and → to decide, ↓ to skip, Backspace to undo.",
+    "seeDna": "See my Style DNA",
+    "keepGoing": "Keep swiping to sharpen your matches.",
+    "swipeFailed": "That swipe didn't save. Please try again.",
+    "endReadyTitle": "That's the deck",
+    "endReadyBody": "Your Style DNA is ready. You can keep going to make your matches even sharper.",
+    "endMoreTitle": "Just a few more",
+    "endMoreBody": "We need a few more answers to understand your style.",
+    "moreLooks": "Show me more looks"
+  },
+  "dna": {
+    "title": "Your Style DNA",
+    "eyebrow": "Your Style DNA",
+    "eyebrowNamed": "{{name}}'s Style DNA",
+    "notReadyTitle": "Your Style DNA is almost ready",
+    "notReadyBody_one": "Answer {{count}} more look and we'll reveal it.",
+    "notReadyBody_other": "Answer {{count}} more looks and we'll reveal it.",
+    "continueQuiz": "Continue the quiz",
+    "share": "Share my DNA",
+    "shareTitle": "My Style DNA",
+    "shareText": "I'm {{archetype}}. Find your fit:",
+    "shareHeading": "Style DNA",
+    "shareFooter": "Find yours",
+    "downloaded": "Image saved. Share it anywhere.",
+    "shopPicks": "Shop my matches",
+    "refine": "Refine",
+    "saveTitle": "Keep your Style DNA",
+    "saveBody": "Create a free account to save your DNA, your wishlist and your matches on any device.",
+    "mixTitle": "Your style mix",
+    "axesTitle": "What defines your style",
+    "signal": {
+      "strong": "A clear favourite",
+      "leaning": "You lean this way",
+      "light": "An early hint, the quiz will sharpen it"
+    },
+    "radarLabel": "Your style profile across cut, colour, pattern, formality and more",
+    "evidenceTitle": "Looks that shaped your DNA",
+    "evidenceBody": "These are the pieces you responded to most strongly."
+  },
+  "brands": {
+    "title": "Brands",
+    "eyebrow": "The brands",
+    "lead": "Local makers and global houses, each one chosen for craft, fit and character.",
+    "searchLabel": "Search brands",
+    "searchPlaceholder": "Search brands",
+    "all": "All",
+    "pieces_one": "{{count}} piece",
+    "pieces_other": "{{count}} pieces",
+    "following": "Following",
+    "emptyTitle": "No brands found",
+    "emptyBody": "Try a different name or filter.",
+    "notFoundTitle": "This brand isn't listed",
+    "notFoundBody": "It may have paused its listing on Find Your Fit.",
+    "allBrands": "All brands",
+    "signInToFollow": "Sign in to follow brands and see more of what they make.",
+    "followed": "You're following {{name}}",
+    "unfollowed": "You've unfollowed {{name}}",
+    "follow": "Follow",
+    "followingBtn": "Following",
+    "website": "Website",
+    "collection": "Collection",
+    "allCategories": "All categories",
+    "noPiecesTitle": "No pieces here yet",
+    "noPiecesBody": "Try another category."
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "createAccount": "Create account",
+    "welcomeBack": "Welcome back",
+    "signInLead": "Your wishlist, Style DNA and matches are waiting.",
+    "newHere": "New to Find Your Fit?",
+    "haveAccount": "Already have an account?",
+    "emailOrMobile": "Email or mobile number",
+    "email": "Email address",
+    "password": "Password",
+    "passwordHint": "At least 8 characters, with a letter and a number.",
+    "confirmPassword": "Confirm new password",
+    "forgot": "Forgot password?",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "mobile": "Mobile number",
+    "mobileOptional": "Mobile number (optional)",
+    "mobileHint": "Lets you sign in with your number too.",
+    "birthdate": "Date of birth",
+    "shopFor": "I usually shop",
+    "shopForHint": "Helps us pick the right looks for your quiz.",
+    "region": "Where you shop from",
+    "signupEyebrow": "Free, always",
+    "signupLead": "Save your Style DNA, keep a wishlist and follow the brands you love.",
+    "acceptLead": "I agree to the",
+    "and": "and",
+    "marketingOptIn": "Send me new arrivals and edits picked for me (unsubscribe any time).",
+    "guestMerge": "Already took the quiz? Your answers will be saved to your new account.",
+    "forgotTitle": "Reset your password",
+    "forgotLead": "Enter the email you signed up with and we'll send you a reset link.",
+    "sendLink": "Send reset link",
+    "resetSent": "If an account exists for {{email}}, a reset link is on its way. It expires in 30 minutes.",
+    "backToSignIn": "Back to sign in",
+    "resetTitle": "Choose a new password",
+    "resetLead": "For {{email}}",
+    "setPassword": "Set password and sign in",
+    "resetInvalidTitle": "This reset link isn't valid",
+    "resetInvalidBody": "It may be incomplete or have expired.",
+    "requestNewLink": "Request a new link",
+    "errors": {
+      "missingCredentials": "Enter your email or mobile and your password.",
+      "lastNameRequired": "Last name is required.",
+      "emailInvalid": "Enter a valid email address.",
+      "weakPassword": "Use at least 8 characters with a letter and a number.",
+      "acceptTerms": "Please accept the terms to continue.",
+      "mismatch": "The passwords don't match."
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "eyebrow": "Your account",
+    "hello": "Hello, {{name}}",
+    "memberSince": "member since {{date}}",
+    "noDnaYet": "Not discovered yet",
+    "viewDna": "View Style DNA",
+    "details": "Your details",
+    "shopForHint": "Changing this refreshes your quiz looks and matches.",
+    "budget": "Usual budget per piece (EGP)",
+    "budgetHint": "We'll gently favour pieces around this price.",
+    "sizes": "Your sizes",
+    "saveChanges": "Save changes",
+    "saved": "Saved",
+    "privacy": "Privacy and personalisation",
+    "personalization": "Personalise my feed and Fit Match",
+    "personalizationHint": "Turn off to see the same edit as everyone else. Your quiz answers are kept unless you delete your account.",
+    "analytics": "Share anonymous usage counts",
+    "analyticsHint": "Helps us improve the app. Never linked to your name.",
+    "marketing": "Email me new arrivals and edits",
+    "marketingHint": "No more than once a week. Unsubscribe any time.",
+    "password": "Password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "updatePassword": "Update password",
+    "passwordChanged": "Password updated",
+    "yourData": "Your data",
+    "yourDataBody": "Download everything we hold about you, or delete your account and all associated data.",
+    "export": "Download my data",
+    "delete": "Delete account",
+    "deleteTitle": "Delete your account?",
+    "deleteBody": "This permanently removes your profile, Style DNA, quiz answers, wishlist and follows. It can't be undone. Enter your password to confirm.",
+    "deleteConfirm": "Delete permanently",
+    "deleted": "Your account has been deleted."
+  },
+  "about": {
+    "title": "About",
+    "eyebrow": "About Find Your Fit",
+    "headlineLead": "Curated fashion.",
+    "headlineAccent": "Perfectly matched.",
+    "lead": "Find Your Fit brings Egypt's best local makers and the global houses you know into one considered place, then matches every piece to how you actually like to dress.",
+    "pillar": {
+      "curated": {
+        "title": "Curated",
+        "body": "Every brand is chosen by people, for craft, fit and character."
+      },
+      "personal": {
+        "title": "Personal",
+        "body": "A two-minute quiz builds your Style DNA, and every piece shows a Fit Match %."
+      },
+      "local": {
+        "title": "Local first",
+        "body": "Independent Egyptian labels sit right alongside international names."
+      },
+      "honest": {
+        "title": "Honest",
+        "body": "You buy directly from the brand. We never mark up prices."
+      }
+    },
+    "howTitle": "How the matching works",
+    "howBody1": "When you swipe, we learn which cuts, colours, patterns, fabrics and levels of formality you gravitate towards. That becomes your Style DNA: a mix of style archetypes with a clear picture of what defines your taste.",
+    "howBody2": "Each piece in the catalogue is described along the same dimensions, so we can show how closely it matches you. The more you swipe, save and shop, the sharper it gets. You can switch personalisation off at any time.",
+    "brandsTitle": "For brands",
+    "brandsBody": "We list brands for free and send shoppers straight to your own store. If you'd like to be part of the edit, get in touch.",
+    "listBrand": "List your brand"
+  },
+  "contact": {
+    "title": "Get in touch",
+    "eyebrow": "Contact",
+    "lead": "Questions, feedback or a brand you'd like to see here? We read every message and reply within two working days.",
+    "name": "Your name",
+    "topicLabel": "Topic",
+    "topic": {
+      "general": "General question",
+      "brand": "List my brand",
+      "account": "My account",
+      "privacy": "Privacy or data request",
+      "bug": "Something isn't working"
+    },
+    "message": "Message",
+    "send": "Send message",
+    "sent": "Thanks, your message is with us. We'll reply by email.",
+    "errors": {
+      "name": "Tell us your name.",
+      "message": "Write a few words so we can help."
+    }
+  },
+  "notFound": {
+    "title": "We couldn't find that page",
+    "body": "The link may be old or mistyped."
+  },
+  "legal": {
+    "eyebrow": "Legal",
+    "privacy": {
+      "title": "Privacy policy",
+      "updated": "Last updated October 2026",
+      "intro": "Find Your Fit helps you discover fashion matched to your taste. This policy explains what we collect, why, how long we keep it and the choices you have. We keep it short and plain on purpose.",
+      "sections": [
+        {
+          "title": "What we collect",
+          "bullets": [
+            "Account details you give us: name, email, optional mobile number, date of birth, region, sizes and budget.",
+            "Your style answers: the looks you like, skip or dislike in the quiz, pieces you save and brands you follow.",
+            "Store visits: when you tap through to a brand's store, we record which piece and when, so the brand can be credited.",
+            "Searches: the words you search for, to improve results. These are stored without your name.",
+            "Anonymous usage counts, only if you allow analytics: for example how many people opened the app today. No identifiers are attached."
+          ]
+        },
+        {
+          "title": "Before you sign up",
+          "paragraphs": [
+            "You can take the quiz without an account. We give your browser a random guest code so your answers can shape your Style DNA. If you create an account, those answers move to it; otherwise they are deleted after 30 days."
+          ]
+        },
+        {
+          "title": "How we use it",
+          "bullets": [
+            "To build your Style DNA and show a Fit Match % on each piece.",
+            "To rank your feed and search results (you can turn personalisation off in your profile).",
+            "To keep your account secure and let you reset your password.",
+            "To send you new arrivals, only if you opt in.",
+            "To understand which brands and features are useful, using aggregate numbers."
+          ]
+        },
+        {
+          "title": "AI and automated matching",
+          "paragraphs": [
+            "Matching is calculated by comparing the style dimensions of each piece with your answers. We use an AI model to describe products (for example, their cut or formality) and to understand search phrases. Your personal details are never sent to the AI model."
+          ]
+        },
+        {
+          "title": "Who we share it with",
+          "paragraphs": [
+            "We don't sell your data. When you tap through to a brand, the brand sees a referral from Find Your Fit, not your identity. We use trusted service providers to run the app (hosting, our customer database and error monitoring), each bound to protect your data."
+          ]
+        },
+        {
+          "title": "How long we keep it",
+          "bullets": [
+            "Account and profile: until you delete your account.",
+            "Style answers: up to 12 months, then they fade out of your DNA.",
+            "Search and system logs: 60 days.",
+            "Guest quiz answers that never become an account: 30 days."
+          ]
+        },
+        {
+          "title": "Your rights",
+          "paragraphs": [
+            "You can view and edit your details, download all your data and delete your account at any time from your profile. For anything else, including objections or corrections, contact us and we'll respond within 30 days."
+          ]
+        },
+        {
+          "title": "Storage on your device",
+          "paragraphs": [
+            "We store a sign-in token, a guest code, your consent choice and app preferences in your browser. We don't use advertising cookies or cross-site trackers."
+          ]
+        },
+        {
+          "title": "Contact",
+          "paragraphs": [
+            "Use the contact page and choose “Privacy or data request”."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Terms of use",
+      "updated": "Last updated October 2026",
+      "intro": "These terms cover your use of Find Your Fit. By creating an account or using the app you agree to them.",
+      "sections": [
+        {
+          "title": "What we do",
+          "paragraphs": [
+            "Find Your Fit is a discovery service. We show products from independent brands and retailers and link you to their stores. We are not the seller: purchases, payment, delivery, returns and refunds are between you and the brand, under the brand's own terms."
+          ]
+        },
+        {
+          "title": "Product information",
+          "paragraphs": [
+            "Product details, prices and availability come from each brand's store and are refreshed regularly, but they can change. The price and stock shown on the brand's site at checkout are the ones that apply."
+          ]
+        },
+        {
+          "title": "Fit Match and Style DNA",
+          "paragraphs": [
+            "Fit Match and Style DNA are suggestions based on your answers. They don't guarantee how a garment will fit your body. Always check the brand's size guide."
+          ]
+        },
+        {
+          "title": "Your account",
+          "bullets": [
+            "You must be at least 16 to create an account.",
+            "Keep your password private. You're responsible for activity on your account.",
+            "Don't misuse the service: no scraping, automated access, or attempts to break security."
+          ]
+        },
+        {
+          "title": "Content and trademarks",
+          "paragraphs": [
+            "Brand names, logos and product images belong to their owners and are shown to help you discover their products. The Find Your Fit name, logo and app design belong to us."
+          ]
+        },
+        {
+          "title": "Liability",
+          "paragraphs": [
+            "We provide the service as is and work hard to keep it accurate and available. To the extent the law allows, we are not liable for purchases made on third-party stores or for indirect losses."
+          ]
+        },
+        {
+          "title": "Changes and ending",
+          "paragraphs": [
+            "We may update these terms and will tell you about significant changes in the app. You can stop using the service and delete your account at any time."
+          ]
+        },
+        {
+          "title": "Governing law",
+          "paragraphs": [
+            "These terms are governed by the laws of the Arab Republic of Egypt."
+          ]
+        }
+      ]
+    }
+  },
+  "feedback": {
+    "title": "Sound & haptics",
+    "sound": "Sound effects",
+    "soundHint": "Soft cues when you swipe, save and unlock your Style DNA.",
+    "haptics": "Haptics",
+    "hapticsHint": "A light buzz on supported phones.",
+    "soundOn": "Turn sound off",
+    "soundOff": "Turn sound on"
+  },
+  "getApp": {
+    "eyebrow": "Find Your Fit app",
+    "title": "Get the app",
+    "lead": "Find Your Fit installs straight from your browser, with no app store needed. It opens full screen, loads faster and keeps your Style DNA one tap away."
+  }
+}

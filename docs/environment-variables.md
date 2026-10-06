@@ -1,93 +1,47 @@
-# Environment Variables Configuration
+# Environment variables
 
-## Required Variables
+The browser never holds Salesforce credentials. All `/api/dw/*` calls go to the Netlify function
+`netlify/functions/proxy.js`, which signs in to Salesforce with the client-credentials flow and forwards the
+request to the Apex REST API (`/services/apexrest/dw/v1/*`).
 
-### VITE_GEMINI_API_KEY
-- **Purpose**: Google Gemini API key for AI chat functionality
-- **Required**: Yes (for AI features)
-- **How to get**: 
-  1. Go to https://makersuite.google.com/app/apikey
-  2. Create a new API key
-  3. Copy and add to Netlify environment variables
-- **Usage**: Used in `src/services/gemini.js`
+## Netlify (Site settings › Environment variables)
 
-## Optional Variables (For Enhanced Features)
+| Variable | Required | Scope | Purpose |
+| --- | --- | --- | --- |
+| `SF_INSTANCE_URL` | Yes | Functions | My Domain URL of the org, e.g. `https://yourorg.my.salesforce.com` (no trailing slash). |
+| `SF_CONNECTED_APP_CLIENT_ID` | Yes | Functions | Consumer key of the Find Your Fit External Client App (client-credentials flow, run-as the integration user with the `Deal_and_Wear_Rest_Integration` permission set). |
+| `SF_CONNECTED_APP_CLIENT_SECRET` | Yes | Functions | Consumer secret of the same app. Mark as **secret** in Netlify. |
+| `ALLOWED_ORIGINS` | No | Functions | Extra comma-separated origins allowed to call the proxy (e.g. a custom domain before it becomes the primary URL). The site's own `URL`, `DEPLOY_PRIME_URL` and `DEPLOY_URL` are always allowed. |
+| `VITE_SENTRY_DSN` | No | Builds | Sentry DSN for front-end error reporting. Leave empty to disable. |
+| `VITE_SENTRY_TRACES_RATE` | No | Builds | Performance sampling rate, `0`–`1` (default `0.1`). |
+| `VITE_APP_ENV` | No | Builds | `production`, `staging`… shown in Sentry. |
+| `VITE_APP_VERSION` | No | Builds | Release name for Sentry (e.g. the git SHA). |
 
-### Google Shopping API
+`URL`, `DEPLOY_PRIME_URL` and `DEPLOY_URL` are set by Netlify automatically.
 
-#### VITE_GOOGLE_SHOPPING_API_KEY
-- **Purpose**: Google Custom Search API key for product search
-- **Required**: No (optional enhancement)
-- **How to get**:
-  1. Go to https://console.cloud.google.com/apis/credentials
-  2. Create a new API key
-  3. Enable "Custom Search API"
-  4. Copy API key
-- **Usage**: Used in `src/services/googleShoppingAPI.js`
+After changing a variable, trigger a redeploy (Deploys › Trigger deploy) so builds and functions pick it up.
 
-#### VITE_GOOGLE_CSE_ID
-- **Purpose**: Google Custom Search Engine ID
-- **Required**: No (only if using Google Shopping API)
-- **How to get**:
-  1. Go to https://programmablesearchengine.google.com/
-  2. Create a new search engine
-  3. Add sites: noon.com, namshi.com, shein.com, zara.com, etc.
-  4. Copy the Search Engine ID
-- **Usage**: Used in `src/services/googleShoppingAPI.js`
+## Local development
 
-### ScraperAPI
+No secrets are needed on a laptop. The Vite dev server forwards `/api/dw/*` to an org using your Salesforce CLI
+session:
 
-#### VITE_SCRAPER_API_KEY
-- **Purpose**: ScraperAPI key for reliable web scraping
-- **Required**: No (optional enhancement)
-- **How to get**:
-  1. Sign up at https://www.scraperapi.com/
-  2. Get API key from dashboard
-  3. Pricing: Starts at $49/month
-- **Usage**: Used in `src/services/scraperAPI.js`
-
-## Setting Environment Variables
-
-### Local Development (.env file)
-
-Create a `.env` file in the project root:
-
-```env
-VITE_GEMINI_API_KEY=your_gemini_api_key_here
-VITE_GOOGLE_SHOPPING_API_KEY=your_google_api_key_here
-VITE_GOOGLE_CSE_ID=your_cse_id_here
-VITE_SCRAPER_API_KEY=your_scraper_api_key_here
+```bash
+sf org login web -a dealandwear      # once
+SF_DEV_ORG=dealandwear npm run dev   # http://localhost:5179
 ```
 
-### Netlify
+To run the Netlify function locally instead, create `.env` (git-ignored) with the three `SF_*` variables and run
+`netlify dev`.
 
-1. Go to your Netlify site dashboard
-2. Navigate to Site settings → Environment variables
-3. Add each variable:
-   - Key: `VITE_GEMINI_API_KEY`
-   - Value: Your API key
-4. Repeat for other variables
-5. Redeploy site for changes to take effect
+## Keys that live in Salesforce, not Netlify
 
-## Feature Flags
+These are entered in Salesforce Setup and never reach the browser or Netlify:
 
-The application will gracefully degrade if optional APIs are not configured:
-- **No Gemini API**: Chat will use fallback responses
-- **No Google Shopping API**: Will use Netlify function + mock data
-- **No ScraperAPI**: Will use direct scraping (less reliable)
+- **Gemini API key**: Setup › Named Credentials › External Credentials › `FYF_Gemini` › principal *Primary* › parameter `ApiKey`.
+- **Mac mini key**: External Credentials › `FYF_MacMini` › principal *Primary* › parameter `ApiKey` (same value as `FYF_SYNC_API_KEY` on the Mac mini).
 
-## Security Notes
+## Retired variables
 
-- Never commit `.env` files to git
-- `.env` is already in `.gitignore`
-- API keys are exposed to client (VITE_ prefix)
-- Use Netlify environment variables for production
-- Consider using server-side API keys for sensitive operations
-
-## Testing Without APIs
-
-The application works without any API keys:
-- Mock product data is always available
-- Fallback AI responses are provided
-- Basic functionality is maintained
-
+`VITE_GEMINI_API_KEY`, `VITE_GOOGLE_SHOPPING_API_KEY`, `VITE_GOOGLE_CSE_ID` and `VITE_SCRAPER_API_KEY` are no longer
+used. Delete them from Netlify: any `VITE_` variable is embedded in the public JavaScript bundle.

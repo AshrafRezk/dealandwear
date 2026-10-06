@@ -1,0 +1,249 @@
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: var(--space-4);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.crumbs a {
+  color: var(--stone);
+  text-decoration: none;
+}
+.crumbs a:hover {
+  color: var(--ink);
+}
+[dir='rtl'] .crumbs svg {
+  transform: scaleX(-1);
+}
+
+.layout {
+  display: grid;
+  gap: var(--space-6);
+}
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: 1.1fr 1fr;
+    gap: var(--space-7);
+    align-items: start;
+  }
+}
+
+.gallery {
+  display: grid;
+  gap: var(--space-3);
+}
+@media (min-width: 900px) {
+  .gallery {
+    position: sticky;
+    inset-block-start: calc(var(--header-h) + var(--space-4));
+  }
+}
+.mainImage {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  background: var(--sand);
+  overflow: hidden;
+}
+.mainImage img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+.noImage {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+.sale {
+  position: absolute;
+  inset-block-start: var(--space-3);
+  inset-inline-start: var(--space-3);
+}
+.thumbs {
+  display: flex;
+  gap: var(--space-2);
+}
+.thumb {
+  inline-size: 72px;
+  aspect-ratio: 3 / 4;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--sand);
+  cursor: pointer;
+  overflow: hidden;
+}
+.thumb img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+.thumbActive {
+  border-color: var(--ink);
+  outline: 1px solid var(--ink);
+}
+
+.info {
+  display: grid;
+  gap: var(--space-4);
+  align-content: start;
+}
+.brand {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone);
+  text-decoration: none;
+}
+a.brand:hover {
+  color: var(--ink);
+}
+.name {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.1;
+  color: var(--ink);
+}
+.price {
+  display: flex;
+  gap: var(--space-3);
+  align-items: baseline;
+  font-size: 20px;
+  color: var(--ink);
+}
+.compare {
+  font-size: 15px;
+  color: var(--stone);
+}
+.origin {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+
+.fitBox {
+  border: 1px solid var(--line);
+  background: var(--white);
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-2);
+  font-size: 14px;
+}
+.fitTitle {
+  font-weight: 600;
+  color: var(--ink);
+}
+.fitScore {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  color: var(--ink);
+}
+.fitValue {
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 1;
+  color: var(--emerald);
+}
+.reasons {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 4px;
+  color: var(--text);
+}
+.reasons li {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+.reasons svg {
+  color: var(--emerald);
+  flex: none;
+}
+.fitLink {
+  font-size: 12px;
+  color: var(--stone);
+}
+
+.sizes {
+  display: grid;
+  gap: var(--space-2);
+  font-size: 13px;
+}
+.sizesTitle {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+.sizes ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.sizes li {
+  min-inline-size: 44px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  text-align: center;
+  background: var(--white);
+}
+
+.actions {
+  display: grid;
+  gap: var(--space-3);
+}
+.secondaryActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+.savedBtn {
+  color: var(--emerald);
+  border-color: var(--emerald);
+}
+.unavailable {
+  padding: var(--space-3) var(--space-4);
+  background: var(--sand);
+  font-size: 14px;
+  color: var(--ink);
+}
+.disclosure {
+  font-size: 12px;
+  color: var(--stone);
+}
+.desc {
+  font-size: 14px;
+  line-height: 1.65;
+  white-space: pre-line;
+  color: var(--text);
+}
+.details {
+  margin: 0;
+  display: grid;
+  gap: var(--space-2);
+  font-size: 14px;
+}
+.details div {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: var(--space-3);
+}
+.details dt {
+  color: var(--stone);
+}
+.details dd {
+  margin: 0;
+  color: var(--ink);
+}
+.similar {
+  margin-block-start: var(--space-5);
+}

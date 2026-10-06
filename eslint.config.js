@@ -26,4 +26,13 @@ export default defineConfig([
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
+  {
+    files: ['**/*.test.{js,jsx}', 'src/test/**', 'e2e/**', '*.config.js', 'scripts/**', 'netlify/**'],
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.node, ...globals.vitest },
+    },
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])

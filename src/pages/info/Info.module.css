@@ -1,0 +1,99 @@
+.page {
+  max-inline-size: 760px;
+  padding-block: var(--space-7);
+  display: grid;
+  gap: var(--space-5);
+}
+.title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(36px, 6vw, 56px);
+  line-height: 1.05;
+  color: var(--ink);
+}
+.title em {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--emerald);
+}
+.lead {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text);
+}
+.updated {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+.section {
+  display: grid;
+  gap: var(--space-3);
+}
+.section h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 24px;
+  color: var(--ink);
+}
+.section p,
+.section li {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text);
+}
+.section ul {
+  margin: 0;
+  padding-inline-start: 20px;
+  display: grid;
+  gap: var(--space-1);
+}
+.pillars {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-4);
+}
+@media (min-width: 700px) {
+  .pillars {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.pillars li {
+  border-block-start: 1px solid var(--ink);
+  padding-block-start: var(--space-3);
+  display: grid;
+  gap: var(--space-1);
+}
+.pillars strong {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 20px;
+  color: var(--ink);
+}
+.pillars span {
+  font-size: 14px;
+  color: var(--text);
+}
+.form {
+  display: grid;
+  gap: var(--space-4);
+}
+.success {
+  background: var(--success-bg);
+  padding: var(--space-4);
+  font-size: 15px;
+}
+.error {
+  color: var(--danger);
+  background: var(--danger-bg);
+  padding: var(--space-3);
+  font-size: 14px;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}

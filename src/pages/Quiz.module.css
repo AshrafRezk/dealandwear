@@ -1,0 +1,217 @@
+.intro {
+  max-inline-size: 560px;
+  padding-block: var(--space-7);
+  display: grid;
+  gap: var(--space-4);
+}
+.introTitle {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(34px, 6vw, 52px);
+  line-height: 1.05;
+  color: var(--ink);
+}
+.introBody {
+  font-size: 16px;
+  color: var(--text);
+}
+.audience {
+  border: 0;
+  padding: 0;
+  margin: var(--space-3) 0 0;
+  display: grid;
+  gap: var(--space-3);
+}
+.audienceLegend {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin-block-end: var(--space-3);
+}
+.howList {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-3) 0 0;
+  display: grid;
+  gap: var(--space-2);
+  font-size: 14px;
+  color: var(--text);
+}
+.howList li {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.deckPage {
+  max-inline-size: 460px;
+  margin-inline: auto;
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-4);
+}
+.progressRow {
+  display: grid;
+  gap: var(--space-2);
+}
+.progressTop {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.progressTop > :first-child {
+  flex: 1;
+}
+.progressText {
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.stage {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  max-block-size: 62dvh;
+  margin-inline: auto;
+  inline-size: 100%;
+}
+.card {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--sand);
+  box-shadow: var(--shadow);
+  touch-action: pan-y;
+  user-select: none;
+  cursor: grab;
+  transition:
+    transform 0.22s ease,
+    opacity 0.22s ease;
+}
+.dragging {
+  transition: none;
+  cursor: grabbing;
+}
+.cardBehind {
+  transform: scale(0.96) translateY(10px);
+  box-shadow: none;
+  pointer-events: none;
+}
+.card img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+.caption {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  padding: var(--space-6) var(--space-4) var(--space-4);
+  background: linear-gradient(to top, rgba(21, 20, 15, 0.78), transparent);
+  color: var(--ivory);
+}
+.captionBrand {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sand);
+}
+.captionName {
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1.2;
+}
+.captionPrice {
+  font-size: 14px;
+  margin-block-start: 2px;
+}
+.stamp {
+  position: absolute;
+  inset-block-start: var(--space-5);
+  padding: 6px 12px;
+  border: 2px solid currentColor;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: rgba(248, 245, 239, 0.9);
+}
+.stamp_like {
+  inset-inline-start: var(--space-4);
+  color: var(--emerald);
+  transform: rotate(-8deg);
+}
+.stamp_dislike {
+  inset-inline-end: var(--space-4);
+  color: var(--danger);
+  transform: rotate(8deg);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(5, auto);
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-4);
+}
+.ctrl,
+.ctrlSmall {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--ink);
+  cursor: pointer;
+}
+.ctrl {
+  inline-size: 64px;
+  block-size: 64px;
+}
+.ctrlSmall {
+  inline-size: 44px;
+  block-size: 44px;
+  color: var(--stone);
+}
+.ctrlSmall:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.ctrlNo:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.ctrlYes {
+  background: var(--ink);
+  color: var(--ivory);
+  border-color: var(--ink);
+}
+.ctrlYes:hover {
+  background: var(--emerald);
+  border-color: var(--emerald);
+}
+.ctrlSpacer {
+  inline-size: 44px;
+}
+.keyHint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--stone);
+}
+@media (hover: none) {
+  .keyHint {
+    display: none;
+  }
+}
+.finishRow {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  text-align: center;
+  font-size: 13px;
+}
+.endCard {
+  padding-block: var(--space-6);
+}
