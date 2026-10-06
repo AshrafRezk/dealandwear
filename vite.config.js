@@ -75,7 +75,7 @@ export default defineConfig(({ command }) => ({
         cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
-            urlPattern: ({ request, url }) => request.destination === 'image' && url.origin !== self.location.origin,
+            urlPattern: ({ request, url }) => request.destination === 'image' && url.hostname === 'cdn.shopify.com',
             handler: 'CacheFirst',
             options: {
               cacheName: 'fyf-product-images',

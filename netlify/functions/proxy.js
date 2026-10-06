@@ -30,6 +30,20 @@ const RATE_WINDOW_MS = 60_000;
 const RATE_LIMITS = { auth: 20, default: 240 };
 const buckets = new Map();
 
+function originAllowed(origin, event) {
+  if (!origin) return true;
+  let host;
+  try {
+    host = new URL(origin).host;
+  } catch {
+    return false;
+  }
+  const selfHost = event.headers['x-forwarded-host'] || event.headers.host || new URL(event.rawUrl).host;
+  if (host === selfHost || host === 'localhost' || host.startsWith('localhost:')) return true;
+  const origins = allowedOrigins();
+  return !origins.length || origins.includes(origin);
+}
+
 function allowedOrigins() {
   const list = (process.env.ALLOWED_ORIGINS || '')
     .split(',')
@@ -86,9 +100,7 @@ export const handler = async (event) => {
     return json(404, { ok: false, error: { code: 'NOT_FOUND', message: 'Unknown endpoint' } });
   }
 
-  const origin = event.headers.origin;
-  const origins = allowedOrigins();
-  if (origin && origins.length && !origins.includes(origin) && !origin.startsWith('http://localhost')) {
+  if (!originAllowed(event.headers.origin, event)) {
     return json(403, { ok: false, error: { code: 'FORBIDDEN_ORIGIN', message: 'Origin not allowed' } });
   }
 
